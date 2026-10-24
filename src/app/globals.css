@@ -30,3 +30,19 @@
 .admin-notice{background:#e1f6f2}
 .button.secondary:hover{border-color:#00A896}
 @media(max-width:480px){.brand-badge{width:36px;height:36px}.brand-copy strong{font-size:15px}.brand-copy small{font-size:9px}.nav>.button{padding:10px}}
+
+
+/* Product-first storefront */
+.storefront-section{background:#fff;padding-top:24px}
+.storefront-heading{align-items:center;margin-bottom:24px}
+.storefront-title{font-size:clamp(32px,4vw,46px);letter-spacing:-.05em;margin:8px 0}
+.storefront-subtitle{margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+.storefront-count{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;background:#e1f6f2;color:#003B73;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:800}
+.storefront-empty{padding:48px 20px;background:#f8fbff;border-color:#d5e4f3}
+.storefront-empty h2{font-size:26px;margin:15px 0 8px}
+.storefront-empty p{max-width:480px;margin:0 auto 14px}
+.storefront-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#003B73;font-weight:900;letter-spacing:.1em;font-size:11px}
+.storefront-stock{min-height:0!important;margin:8px 0 0;color:#0b6b55!important;font-size:12px!important;font-weight:700}
+.storefront-hero{margin-top:12px}
+.storefront-hero h2{font-size:clamp(38px,5vw,60px);line-height:1.04;letter-spacing:-.06em;margin:18px 0}
+@media(max-width:600px){.storefront-section{padding-top:8px}.storefront-heading{align-items:flex-start;flex-direction:column;gap:12px}.storefront-title{font-size:34px}.storefront-subtitle{font-size:14px}.storefront-count{font-size:12px}.storefront-empty{padding:32px 16px}.storefront-hero{margin-top:0}}
