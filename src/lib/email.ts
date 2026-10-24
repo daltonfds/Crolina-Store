@@ -21,4 +21,4 @@ export async function sendProofSubmittedEmail(order: {order_reference:string;cus
   const result = await resend.emails.send({from,to:support,subject:`Payment proof submitted: ${order.order_reference}`,html});
   if (result.error) console.error("Proof notification failed",result.error);
 }
-function escapeHtml(value: string) { return value.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c] || c)); }
+function escapeHtml(value: string) { return value.replace(/[&<>"']/g, (c) => { switch(c) { case "&": return "&amp;"; case "<": return "&lt;"; case ">": return "&gt;"; case '"': return "&quot;"; case "'": return "&#39;"; default: return c; } }); }
