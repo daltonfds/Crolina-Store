@@ -1,16 +1,8 @@
-import { BookOpen, Watch, BatteryCharging, Headphones, Zap, Truck, ShieldCheck, MessageCircle, ArrowRight, ShoppingBag } from "lucide-react";
+import { Truck, ShieldCheck, MessageCircle, ArrowRight, ShoppingBag } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-
-const categories = [
-  { title: "Kindles", text: "Take your library anywhere", icon: BookOpen },
-  { title: "Smartwatches", text: "Stay connected on the move", icon: Watch },
-  { title: "Power Banks", text: "Reliable power wherever you go", icon: BatteryCharging },
-  { title: "TWS Earphones", text: "Wireless sound for every day", icon: Headphones },
-  { title: "Mini UPS", text: "Backup power for essentials", icon: Zap },
-];
 
 type StoreProduct = {
   id: string;
@@ -51,6 +43,7 @@ function formatPrice(price: number | string) {
 
 export default async function Home() {
   const products = await getProducts();
+  const categories = [...new Set(products.map((product) => product.category).filter(Boolean))];
   const whatsapp = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/[^0-9]/g, "");
   const whatsappHref = whatsapp
     ? `https://wa.me/${whatsapp}?text=${encodeURIComponent("Hi Crolina Shop, what products are available?")}`
@@ -65,8 +58,8 @@ export default async function Home() {
           <div className="section-head storefront-heading">
             <div>
               <p className="eyebrow">Crolina Shop · South Africa</p>
-              <h1 className="storefront-title">Shop products</h1>
-              <p className="storefront-subtitle">Browse practical electronics and everyday tech essentials.</p>
+              <h1 className="storefront-title">Style for every day</h1>
+              <p className="storefront-subtitle">Discover the collection, thoughtfully selected for your everyday life.</p>
             </div>
             <span className="storefront-count"><ShoppingBag size={17} /> {products.length} {products.length === 1 ? "product" : "products"} available</span>
           </div>
@@ -74,8 +67,8 @@ export default async function Home() {
           {products.length === 0 ? (
             <div className="empty storefront-empty">
               <ShoppingBag size={34} />
-              <h2>No products available yet</h2>
-              <p>Our product catalogue is being prepared. Please check back soon or contact us to ask about availability.</p>
+              <h2>The collection is coming together</h2>
+              <p>We’re preparing our first collection. New products will appear here as soon as they’re added to the store.</p>
               <a className="button primary" href={whatsappHref} target={whatsapp ? "_blank" : undefined} rel={whatsapp ? "noreferrer" : undefined}>Contact Crolina Shop</a>
             </div>
           ) : (
@@ -102,39 +95,39 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="categories" className="container section">
+      {categories.length > 0 && <section id="categories" className="container section">
         <div className="section-head">
-          <div><p className="eyebrow">Find what you need</p><h2>Shop by category</h2></div>
-          <p>Useful tech, thoughtfully selected.</p>
+          <div><p className="eyebrow">Explore the collection</p><h2>Shop by category</h2></div>
+          <p>Browse products by their listed category.</p>
         </div>
         <div className="category-grid">
-          {categories.map(({ title, text, icon: Icon }) => (
-            <Link className="category" href={`/category/${encodeURIComponent(title.toLowerCase().replaceAll(" ", "-"))}`} key={title}>
-              <div className="icon"><Icon size={23} /></div>
+          {categories.map((title) => (
+            <Link className="category" href={`/shop?category=${encodeURIComponent(title)}`} key={title}>
+              <div className="icon"><ShoppingBag size={23} /></div>
               <h3>{title}</h3>
-              <p>{text}</p>
+              <p>Explore products in this category.</p>
             </Link>
           ))}
         </div>
-      </section>
+      </section>}
 
       <section className="hero storefront-hero">
         <div className="container hero-grid">
           <div>
-            <p className="eyebrow">Essential Electronics · South Africa</p>
-            <h2>Small upgrades.<br />Better everyday.</h2>
-            <p className="lead">Discover practical tech for the way you live, work and move — from portable power to personal audio and smart essentials.</p>
+            <p className="eyebrow">A considered collection</p>
+            <h2>Style for every day.</h2>
+            <p className="lead">Discover thoughtful finds for your everyday life. Browse the collection and find something that feels like you.</p>
             <div className="actions">
               <a className="button primary" href="#products">Explore products <ArrowRight size={17} /></a>
               <a className="button secondary" href="#categories">Browse categories</a>
             </div>
-            <p className="trust">✓ Clear product details　 ✓ Order support　 ✓ Prices in ZAR</p>
+            <p className="trust">Thoughtfully selected　 ·　 Secure order support　 ·　 Prices in ZAR</p>
           </div>
           <div className="visual" aria-hidden="true">
             <div className="orb" />
             <div className="tiles">
-              {categories.slice(0, 4).map(({ title, icon: Icon }) => (
-                <div className="tile" key={title}><Icon size={34} /><b>{title.toUpperCase()}</b></div>
+              {["Everyday style", "Made for you", "The collection", "Find your favourite"].map((title) => (
+                <div className="tile" key={title}><ShoppingBag size={30} /><b>{title.toUpperCase()}</b></div>
               ))}
             </div>
           </div>
