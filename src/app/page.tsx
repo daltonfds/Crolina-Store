@@ -78,7 +78,7 @@ export default async function Home() {
                   <Link href={`/products/${product.slug}`} className="product-image" aria-label={`View ${product.name}`}>
                     {product.image_urls?.[0]
                       ? <img src={product.image_urls[0]} alt={product.name} loading="lazy" />
-                      : <div className="storefront-placeholder"><Zap size={38} /><span>CROLINA SHOP</span></div>}
+                      : <div className="storefront-placeholder"><ShoppingBag size={38} /><span>CROLINA SHOP</span></div>}
                   </Link>
                   <div className="product-body">
                     <small>{product.category}{product.condition ? ` · ${product.condition}` : ""}</small>
