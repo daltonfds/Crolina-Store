@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 const resendKey = process.env.RESEND_API_KEY;
 const from = process.env.RESEND_FROM_EMAIL || "Crolina Store <support@crolina.shop>";
-const support = process.env.STORE_ADMIN_EMAIL || "support@crolina.shop";
+const support = process.env.STORE_ALERT_EMAIL || "support@crolina.shop";
 export async function sendOrderCreatedEmail(order: {order_reference:string;customer_name:string;customer_email:string;total_zar:number|string;payment_method:string;shipping_address:Record<string,unknown>}) {
   if (!resendKey) { console.warn("RESEND_API_KEY is not configured; order email skipped."); return; }
   const resend = new Resend(resendKey);
