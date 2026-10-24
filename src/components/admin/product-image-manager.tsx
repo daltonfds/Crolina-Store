@@ -1,10 +1,11 @@
 "use client";
 import {useState} from "react";
+import type {ChangeEvent} from "react";
 import {ImagePlus, X, LoaderCircle} from "lucide-react";
 import {createSupabaseBrowserClient} from "@/lib/supabase-browser";
 export default function ProductImageManager({images,onChange}:{images:string[];onChange:(images:string[])=>void}) {
  const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
- async function upload(e:React.ChangeEvent<HTMLInputElement>){
+ async function upload(e:ChangeEvent<HTMLInputElement>){
   const files=Array.from(e.target.files||[]);e.target.value="";
   if(!files.length)return;
   if(images.length+files.length>8){setMessage("A maximum of 8 images is allowed per product.");return;}
