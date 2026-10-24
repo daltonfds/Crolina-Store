@@ -121,3 +121,14 @@ footer a { color:#fff; }
   .product-image { aspect-ratio:4/5; }
   .storefront-hero { padding:36px 0; }
 }
+
+
+/* Phase 2: responsive shop filters */
+.shop-filters { display:grid; grid-template-columns:minmax(180px,1.5fr) minmax(150px,1fr) minmax(150px,1fr) auto; gap:12px; align-items:end; margin:0 0 28px; padding:18px; border:1px solid #E8E2DC; border-radius:16px; background:#fff; }
+.shop-filters label { display:flex; flex-direction:column; gap:7px; font-size:12px; font-weight:500; color:#6B6570; }
+.shop-filters input,.shop-filters select { width:100%; min-height:48px; padding:0 13px; border:1px solid #E8E2DC; border-radius:12px; background:#fff; color:#1A1620; font:400 14px/1.4 var(--font-inter),system-ui,sans-serif; }
+.shop-filters input:focus,.shop-filters select:focus { outline:2px solid #B8456B; outline-offset:1px; }
+.shop-filters .button { cursor:pointer; border:0; }
+.shop-filters .shop-search { min-width:0; }
+@media(max-width:760px) { .shop-filters { grid-template-columns:1fr 1fr; } .shop-filters .shop-search { grid-column:1/-1; } .shop-filters .button { width:100%; } }
+@media(max-width:420px) { .shop-filters { grid-template-columns:1fr; padding:14px; } .shop-filters .shop-search { grid-column:auto; } }
