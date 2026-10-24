@@ -13,7 +13,7 @@ export async function requireAdmin(request: Request) {
   const { data: authData, error: authError } = await supabase.auth.getUser(token);
   if (authError || !authData.user) throw new Error("UNAUTHORIZED");
   const { data: admin, error } = await supabase.from("admin_users").select("user_id,email").eq("user_id", authData.user.id).maybeSingle();
-  if (error || !admin || admin.email.toLowerCase() !== (authData.user.email || "").toLowerCase()) throw new Error("FORBIDDEN");
+  if (error || !admin || admin.email.toLowerCase() !== (authData.user.email || "").toLowerCase() || (authData.user.email || "").toLowerCase() !== "daltonfelizarda66@gmail.com") throw new Error("FORBIDDEN");
   return { supabase, user: authData.user, admin };
 }
 export function authErrorResponse(error: unknown) {
