@@ -1,5 +1,3 @@
-"use server";
-
 import { NextResponse } from "next/server";
 import { getAdmin } from "@/lib/auth";
 import { createServiceClient } from "@/lib/supabase/service";
