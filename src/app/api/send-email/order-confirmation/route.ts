@@ -1,4 +1,0 @@
-import {requireAdmin,authErrorResponse} from "@/lib/supabase-server";
-import {sendOrderCreatedEmail} from "@/lib/email";
-export const runtime="nodejs";
-export async function POST(request:Request){try{const {supabase}=await requireAdmin(request);const b=await request.json();if(typeof b.order_id!=="string")return Response.json({error:"Order ID required."},{status:400});const {data:order,error}=await supabase.from("orders").select("order_reference,customer_name,customer_email,total_zar,payment_method,shipping_address").eq("id",b.order_id).maybeSingle();if(error||!order)return Response.json({error:"Order not found."},{status:404});await sendOrderCreatedEmail(order);return Response.json({ok:true,message:"Order email queued for delivery."});}catch(e){if(e instanceof Error&&["FORBIDDEN","UNAUTHORIZED"].includes(e.message))return authErrorResponse(e);console.error(e);return Response.json({error:"Could not send order email."},{status:500});}}
