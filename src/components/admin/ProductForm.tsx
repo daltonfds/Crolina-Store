@@ -4,7 +4,6 @@ import { useActionState, useState } from "react";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { saveProduct } from "@/app/admin/actions";
 import { CATEGORY_SUGGESTIONS } from "@/lib/config";
-import { createClient } from "@/lib/supabase/browser";
 import type { Product } from "@/lib/types";
 import { slugify } from "@/lib/utils";
 
@@ -26,21 +25,40 @@ export default function ProductForm({ product, categories }: { product?: Product
     const files = Array.from(e.target.files ?? []);
     e.target.value = "";
     if (!files.length) return;
+
     setUploading(true);
     setUploadError("");
-    const sb = createClient();
     const urls: string[] = [];
-    for (const file of files) {
-      const ext = TYPES[file.type];
-      if (!ext) { setUploadError("Use JPG, PNG, WebP or AVIF images."); continue; }
-      if (file.size > 5 * 1024 * 1024) { setUploadError(`${file.name} is larger than 5 MB.`); continue; }
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await sb.storage.from("product-images").upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-      if (error) { setUploadError(`Upload failed: ${error.message}`); continue; }
-      urls.push(sb.storage.from("product-images").getPublicUrl(path).data.publicUrl);
+    try {
+      for (const file of files) {
+        const ext = TYPES[file.type];
+        if (!ext) {
+          setUploadError(`Use JPG, PNG, WebP or AVIF images.`);
+          continue;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          setUploadError(`${file.name} is larger than 5 MB.`);
+          continue;
+        }
+
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          const response = await fetch("/api/admin/product-images", { method: "POST", body: formData });
+          const result: { url?: string; error?: string } = await response.json().catch(() => ({}));
+          if (!response.ok || !result.url) {
+            setUploadError(`Upload failed: ${result.error ?? "The server could not process the image."}`);
+            continue;
+          }
+          urls.push(result.url);
+        } catch {
+          setUploadError("Upload failed: Could not reach the upload service. Check your connection and try again.");
+        }
+      }
+      setImages((prev) => [...prev, ...urls].slice(0, 10));
+    } finally {
+      setUploading(false);
     }
-    setImages((prev) => [...prev, ...urls].slice(0, 10));
-    setUploading(false);
   }
 
   return (
