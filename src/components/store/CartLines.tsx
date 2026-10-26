@@ -58,7 +58,7 @@ export function CartTotals({ lines, deliveryMethod = "standard" }: { lines: Cart
         </div>
       )}
       <div className="flex justify-between"><span className="text-muted">Subtotal (after discounts)</span><span>{formatZAR(subtotal)}</span></div>
-      <div className="flex justify-between"><span className="text-muted">Delivery</span><span>{shipping === 0 ? "Free" : formatZAR(shipping)}</span></div>
+      <div className="flex justify-between"><span className="text-muted">Delivery · {deliveryMethod === "express" ? "Express" : "Standard"}</span><span>{shipping === 0 ? "Free" : formatZAR(shipping)}</span></div>
       <div className="flex justify-between border-t border-line pt-2 text-base font-medium"><span>Total</span><span>{formatZAR(subtotal + shipping)}</span></div>
       <p className="text-xs text-muted">Free delivery applies to 5 or more eligible items OR a product subtotal of R2,500 or more after discounts.</p>
       <p className="text-xs text-muted">Prices include VAT where applicable.</p>
