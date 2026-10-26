@@ -18,7 +18,8 @@ export default function Footer() {
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <Link href="/shop">Shop</Link>
           <Link href="/account">Track an order</Link>
-          <Link href="/returns">Returns &amp; warranty</Link>
+          <Link href="/delivery">Delivery information</Link>
+          <Link href="/returns">Returns &amp; refunds</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
         </nav>
