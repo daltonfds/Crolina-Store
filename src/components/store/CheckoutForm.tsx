@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CartTotals } from "./CartLines";
-import { PROVINCES, STORE, shippingFor } from "@/lib/config";
-import { cartSubtotal, useCart, useMounted } from "@/lib/cart";
+import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
+import { cartCount, cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
 
 export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailable: boolean }) {
@@ -12,6 +12,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const mounted = useMounted();
   const { lines, clear } = useCart();
   const [choice, setChoice] = useState<"eft" | "payment_link">("eft");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -29,7 +30,10 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const linkOk = storeLinkAvailable || (lines.length === 1 && !!lines[0].link);
   const method = choice === "payment_link" && linkOk ? "payment_link" : "eft";
   const subtotal = cartSubtotal(lines);
-  const total = subtotal + shippingFor(subtotal);
+  const itemCount = cartCount(lines);
+  const freeDelivery = qualifiesForFreeShipping(subtotal, itemCount);
+  const deliveryFee = shippingFor(subtotal, itemCount, deliveryMethod);
+  const total = subtotal + deliveryFee;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,6 +52,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
           address: { street: v("street"), suburb: v("suburb"), city: v("city"), province: v("province"), postal_code: v("postal_code") },
           notes: v("notes"),
           payment_method: method,
+          delivery_method: deliveryMethod,
           accepted: true,
         }),
       });
@@ -93,6 +98,23 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
         </section>
 
         <section className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-medium">Delivery method</h2>
+            <Link href="/delivery" target="_blank" className="text-sm underline">Delivery information</Link>
+          </div>
+          {freeDelivery && <p className="rounded-xl bg-[#f0f7ff] px-3 py-2 text-sm text-[#1e4f9c]">Your order qualifies for free delivery after discounts.</p>}
+          <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
+            <input type="radio" name="delivery_method" checked={deliveryMethod === "standard"} onChange={() => setDeliveryMethod("standard")} className="mt-1" />
+            <span className="flex-1"><span className="block text-sm font-medium">Standard delivery · 1–5 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.standardShipping)}</span></span>
+          </label>
+          <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
+            <input type="radio" name="delivery_method" checked={deliveryMethod === "express"} onChange={() => setDeliveryMethod("express")} className="mt-1" />
+            <span className="flex-1"><span className="block text-sm font-medium">Express delivery · 1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
+          </label>
+          <p className="text-xs text-muted">Free delivery applies when your order contains 5 or more eligible items OR the product subtotal after discounts is R2,500 or more.</p>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="text-base font-medium">Payment</h2>
           <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
             <input type="radio" name="pm" checked={method === "eft"} onChange={() => setChoice("eft")} className="mt-1" />
@@ -119,7 +141,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
             <li key={l.id} className="flex justify-between gap-3"><span className="line-clamp-1">{l.qty} × {l.name}</span><span>{formatZAR(l.price * l.qty)}</span></li>
           ))}
         </ul>
-        <CartTotals lines={lines} />
+        <CartTotals lines={lines} deliveryMethod={deliveryMethod} />
         <label className="flex cursor-pointer items-start gap-3 text-sm">
           <input type="checkbox" required checked={accepted} onChange={(e) => setAccepted(e.target.checked)} className="mt-1 h-4 w-4 shrink-0" />
           <span>
