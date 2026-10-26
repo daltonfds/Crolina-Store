@@ -98,7 +98,7 @@ export default async function ProductPage({ params }: Props) {
 
           <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 rounded-2xl border border-line p-3 text-center sm:grid-cols-4 sm:gap-2 sm:p-3">
             {[
-              { Icon: Truck, t: "Free delivery", s: `Over R ${STORE.freeShippingOver}` },
+              { Icon: Truck, t: "Delivery options", s: "From R100 · See details" },
               { Icon: RotateCcw, t: "7-day returns", s: "See policy" },
               { Icon: ShieldCheck, t: "Safe payment", s: "EFT or link" },
               { Icon: MessageCircle, t: "Support", s: "WhatsApp" },
@@ -122,17 +122,14 @@ export default async function ProductPage({ params }: Props) {
                 </dl>
               </Accordion>
             )}
-            <Accordion title="Delivery">
-              Delivered nationwide in {STORE.deliveryTime} after your payment is confirmed. Free over R {STORE.freeShippingOver}, otherwise a flat R {STORE.shippingFlat}.
+            <Accordion title="Delivery information">
+              <p>Choose Standard Delivery (R100, estimated 1–5 business days) or Express Delivery (R150, estimated 1–3 business days).</p>
+              <p className="mt-2">Get free delivery when your order contains 5 or more eligible items OR your product subtotal is R2,500 or more after discounts.</p>
+              <p className="mt-2"><Link href="/delivery" className="font-medium underline">View delivery options and conditions</Link></p>
             </Accordion>
             <Accordion title="Returns & warranty">
-              <p>Report a problem or return an item within 7 days of delivery.</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5">
-                <li>Return: 50% of the price paid is refunded.</li>
-                <li>Arrived damaged or destroyed: 50% of the price paid is refunded.</li>
-                <li>Wrong item sent: we deduct the value of the item sent and the delivery fee, and refund the rest.</li>
-              </ul>
-              <p className="mt-2"><Link href="/returns" className="underline">Read the full policy</Link></p>
+              <p>Returns, cancellations, defective goods and refunds are handled in accordance with applicable South African consumer protection law.</p>
+              <p className="mt-2"><Link href="/returns" className="underline">Read the full Returns &amp; Refunds Policy</Link></p>
             </Accordion>
           </div>
         </div>
