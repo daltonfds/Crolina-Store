@@ -39,12 +39,18 @@ export default function SocialLinks() {
     { href: `mailto:${STORE.email}`, label: "Email", value: STORE.email, Icon: Mail },
   ];
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
-      {items.map(({ href, label, value, Icon }) => (
+    <ul className="flex flex-row flex-wrap items-center gap-3">
+      {items.map(({ href, label, Icon }) => (
         <li key={label}>
-          <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-white"><Icon size={20} /></span>
-            <span className="min-w-0 text-sm"><span className="block text-xs text-muted">{label}</span><span className="block truncate">{value}</span></span>
+          <a
+            href={href}
+            target={href.startsWith("http") ? "_blank" : undefined}
+            rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+            aria-label={label}
+            title={label}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white text-ink transition-colors hover:bg-blue-50 hover:text-deep-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-deep-blue"
+          >
+            <Icon size={21} />
           </a>
         </li>
       ))}
