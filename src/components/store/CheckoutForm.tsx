@@ -105,11 +105,11 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
           {freeDelivery && <p className="rounded-xl bg-[#f0f7ff] px-3 py-2 text-sm text-[#1e4f9c]">Your order qualifies for free delivery after discounts.</p>}
           <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
             <input type="radio" name="delivery_method" checked={deliveryMethod === "standard"} onChange={() => setDeliveryMethod("standard")} className="mt-1" />
-            <span className="flex-1"><span className="block text-sm font-medium">Standard delivery · 1–5 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.standardShipping)}</span></span>
+            <span className="flex-1"><span className="block text-sm font-medium">Delivery · 1–5 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.standardShipping)}</span></span>
           </label>
           <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
             <input type="radio" name="delivery_method" checked={deliveryMethod === "express"} onChange={() => setDeliveryMethod("express")} className="mt-1" />
-            <span className="flex-1"><span className="block text-sm font-medium">Express delivery · 1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
+            <span className="flex-1"><span className="block text-sm font-medium">Delivery · 1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
           </label>
           <p className="text-xs text-muted">Free delivery applies when your order contains 5 or more eligible items OR the product subtotal after discounts is R2,500 or more.</p>
         </section>
