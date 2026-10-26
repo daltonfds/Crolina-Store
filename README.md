@@ -30,6 +30,6 @@ Project ref: dbyzwgbdoiepfrgzfcsz; region: sa-east-1. The catalogue seed and ser
 - Configure verified bank details and a verified external payment URL at /admin/dashboard > Payment settings. No bank details are fabricated or seeded.
 - Proofs are stored in a private bucket; short-lived signed URLs are only returned to authenticated administrators.
 - Payment proof is not proof of cleared funds. Verify funds with the bank/payment provider before setting an order to Paid.
-- Delivery pricing is configured in `src/lib/config.ts`: R100 for the 1–3 business-day option, R150 for the 1–5 business-day option, and free delivery when the eligible item count is at least 5 or the eligible product subtotal after discounts is at least R2,500. The checkout API recalculates delivery server-side.
+- Delivery pricing is configured in `src/lib/config.ts`: R100 for Standard delivery (1–5 business days), R150 for Express delivery (1–3 business days), and free delivery when the eligible item count is at least 5 or the eligible product subtotal after discounts is at least R2,500. The checkout API recalculates delivery server-side.
 - Resend requires domain verification and an authorised sender address.
 - Run npm install, npm run typecheck and npm run build after pulling. Test guest checkout, stock contention, proof upload, admin role enforcement, email delivery and inventory reconciliation before production.
