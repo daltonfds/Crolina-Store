@@ -81,7 +81,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
 
         <section className="space-y-3">
           <h2 className="text-base font-medium">Delivery address</h2>
-          <p className="text-sm text-muted">Nationwide delivery in {STORE.deliveryTime}, after your payment is confirmed.</p>
+          <p className="text-sm text-muted">Nationwide delivery in {deliveryMethod === "express" ? "1–3 business days" : "1–5 business days"}, after your payment is confirmed.</p>
           <div><label className="label" htmlFor="street">Street address</label><input id="street" name="street" required autoComplete="street-address" className="field" /></div>
           <div className="grid gap-3 md:grid-cols-2">
             <div><label className="label" htmlFor="suburb">Suburb</label><input id="suburb" name="suburb" className="field" /></div>
