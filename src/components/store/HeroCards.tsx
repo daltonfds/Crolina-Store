@@ -21,14 +21,14 @@ export default function HeroCards() {
   const { Icon, title, text } = CARDS[i];
   return (
     <div
-      className="max-w-md rounded-2xl bg-white p-4 shadow-sm"
+      className="w-full max-w-xl rounded-2xl border border-blue-100/80 bg-[#f8fbff] p-3 shadow-sm sm:p-4"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={() => setPaused(true)}
       onTouchEnd={() => setTimeout(() => setPaused(false), 6000)}
     >
       <div key={i} className="card-in flex min-h-[5.5rem] items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-soft-blue text-deep-blue"><Icon size={20} strokeWidth={1.75} /></span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf2ff] text-deep-blue"><Icon size={20} strokeWidth={1.75} /></span>
         <div>
           <p className="text-sm font-medium">{title}</p>
           <p className="mt-0.5 text-sm text-muted">{text}</p>

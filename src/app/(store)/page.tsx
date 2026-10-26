@@ -10,11 +10,8 @@ export default async function Home() {
   const products = featured.length ? featured : await getProducts({ limit: 8 });
   return (
     <div className="space-y-8">
-      <section className="rounded-3xl bg-soft-blue p-5 md:p-14">
+      <section className="rounded-3xl bg-[#f4f8ff] p-3 sm:p-5 md:p-8">
         <HeroCards />
-        <h1 className="mt-6 text-2xl font-medium leading-tight md:text-5xl">Style for every day</h1>
-        <p className="mt-2 max-w-md text-sm text-ink/70 md:text-base">Essential goods, thoughtfully selected and delivered across South Africa.</p>
-        <Link href="/shop" className="mt-5 inline-flex h-11 items-center rounded-full border border-deep-blue/30 bg-white/40 px-6 text-sm hover:bg-white/70">Shop collection</Link>
       </section>
 
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">

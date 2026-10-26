@@ -56,7 +56,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="space-y-12">
-      <div className="grid gap-6 md:grid-cols-2 md:gap-10">
+      <div className="grid min-w-0 grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 md:gap-10">
         <div className="md:sticky md:top-24 md:self-start">
           <ProductGallery
             product={{ id: p.id, name: p.name, category: p.category, image_urls: p.image_urls }}
@@ -64,9 +64,9 @@ export default async function ProductPage({ params }: Props) {
           />
         </div>
 
-        <div>
-          <Link href={`/shop?category=${encodeURIComponent(p.category)}`} className="inline-block rounded-full bg-surface px-3 py-1 text-xs text-muted">{p.category}</Link>
-          <h1 className="mt-2 text-2xl font-medium leading-tight md:text-3xl">{p.name}</h1>
+        <div className="min-w-0">
+          <Link href={`/shop?category=${encodeURIComponent(p.category)}`} className="inline-block max-w-full rounded-full bg-surface px-3 py-1 text-xs text-muted">{p.category}</Link>
+          <h1 className="mt-2 break-words text-xl font-medium leading-snug sm:text-2xl md:text-3xl">{p.name}</h1>
 
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="text-2xl font-medium">{formatZAR(p.price_zar)}</span>
@@ -96,17 +96,17 @@ export default async function ProductPage({ params }: Props) {
             <a href={wa} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-muted underline">Have a question? Ask us on WhatsApp</a>
           )}
 
-          <div className="mt-6 grid grid-cols-4 gap-2 rounded-2xl border border-line p-3 text-center">
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 rounded-2xl border border-line p-3 text-center sm:grid-cols-4 sm:gap-2 sm:p-3">
             {[
               { Icon: Truck, t: "Free delivery", s: `Over R ${STORE.freeShippingOver}` },
               { Icon: RotateCcw, t: "7-day returns", s: "See policy" },
               { Icon: ShieldCheck, t: "Safe payment", s: "EFT or link" },
               { Icon: MessageCircle, t: "Support", s: "WhatsApp" },
             ].map(({ Icon, t, s }) => (
-              <div key={t} className="flex flex-col items-center gap-1">
+              <div key={t} className="flex min-w-0 flex-col items-center gap-1 px-1">
                 <Icon size={20} strokeWidth={1.5} className="text-deep-blue" />
-                <p className="text-[11px] font-medium leading-tight">{t}</p>
-                <p className="text-[10px] leading-tight text-muted">{s}</p>
+                <p className="text-xs font-medium leading-tight sm:text-[11px]">{t}</p>
+                <p className="text-[11px] leading-tight text-muted sm:text-[10px]">{s}</p>
               </div>
             ))}
           </div>
