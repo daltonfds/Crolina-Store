@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { PROVINCES, shippingFor } from "@/lib/config";
+import { PROVINCES, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { sendOrderEmails } from "@/lib/email";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -22,6 +22,7 @@ const schema = z.object({
   }),
   notes: z.string().trim().max(500).default(""),
   payment_method: z.enum(["eft", "payment_link"]),
+  delivery_method: z.enum(["standard", "express"]).default("standard"),
   accepted: z.literal(true),
 });
 
@@ -46,7 +47,8 @@ export async function POST(req: Request) {
     if (r.status !== "Active" || r.stock_count < q) return fail(`${r.name} isn't available in the quantity you chose.`, 409);
     subtotal += Number(r.price_zar) * q;
   }
-  const shipping = shippingFor(subtotal);
+  const itemCount = [...qty.values()].reduce((total, quantity) => total + quantity, 0);
+  const shipping = shippingFor(subtotal, itemCount, d.delivery_method as DeliveryMethod);
 
   let linkUrl: string | null = null;
   if (d.payment_method === "payment_link") {
