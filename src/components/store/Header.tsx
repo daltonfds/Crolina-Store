@@ -10,7 +10,8 @@ const LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/favorites", label: "Favorites" },
   { href: "/account", label: "Account & order tracking" },
-  { href: "/returns", label: "Returns & warranty" },
+  { href: "/delivery", label: "Delivery information" },
+  { href: "/returns", label: "Returns & refunds" },
 ];
 
 export default function Header() {
