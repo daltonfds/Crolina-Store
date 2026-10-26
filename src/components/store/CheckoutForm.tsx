@@ -123,7 +123,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
           </label>
           <label className={`card flex items-start gap-3 p-4 has-[:checked]:border-ink ${linkOk ? "cursor-pointer" : "opacity-50"}`}>
             <input type="radio" name="pm" disabled={!linkOk} checked={method === "payment_link"} onChange={() => setChoice("payment_link")} className="mt-1" />
-            <span>
+            <div className="min-w-0 flex-1">
               <span className="block text-sm font-medium">Payment link</span>
               <span className="text-sm text-muted">
                 {linkOk
@@ -131,7 +131,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
                   : "Not available for the items in your bag. Choose EFT or order via WhatsApp."}
               </span>
               {linkOk && <PaymentMethodLogos />}
-            </span>
+            </div>
           </label>
         </section>
       </div>
