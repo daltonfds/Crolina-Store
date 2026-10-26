@@ -3,10 +3,10 @@ export const STORE = {
   tagline: "Essential goods | South Africa",
   url: process.env.NEXT_PUBLIC_STORE_URL || "https://www.crolina.shop",
   whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
-  standardShipping: 150,
-  expressShipping: 100,
+  standardShipping: 100,
+  expressShipping: 150,
   /** Legacy fallback for components that still display a single delivery rate. */
-  shippingFlat: 150,
+  shippingFlat: 100,
   freeShippingOver: 2500,
   freeShippingMinItems: 5,
   lowStock: 3,
