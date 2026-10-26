@@ -4,7 +4,7 @@ import ProductCard from "@/components/store/ProductCard";
 import { getCategories, getProducts } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 export const metadata = { title: "Shop" };
 
 type SP = { q?: string; category?: string; sort?: string; search?: string };
