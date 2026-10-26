@@ -21,8 +21,8 @@ function CapitecLogo() {
 }
 
 const METHODS = [
-  { name: "Visa", icon: <VisaLogo /> },
   { name: "Mastercard", icon: <MastercardLogo /> },
+  { name: "Visa", icon: <VisaLogo /> },
   { name: "Google Pay", icon: <GooglePayLogo /> },
   { name: "Apple Pay", icon: <ApplePayLogo /> },
   { name: "Capitec Pay", icon: <CapitecLogo /> },
