@@ -17,7 +17,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
 
 export async function sendOrderEmails(o: { reference: string; name: string; email: string; total: number; method: string }) {
   const link = `${STORE.url}/order/${o.reference}`;
-  const how = o.method === "eft" ? "Pay by EFT using your order reference, then upload your proof of payment on the order page." : "Use the pay button on your order page.";
+  const how = (o.method === "eft" ? "Pay by EFT using your order reference, then upload your proof of payment (photo or document) on the order page." : "Use the pay button on your order page.") + ` Delivery takes ${STORE.deliveryTime} nationwide once your payment is confirmed.`;
   await sendEmail(
     o.email,
     `Your Crolina order ${o.reference}`,

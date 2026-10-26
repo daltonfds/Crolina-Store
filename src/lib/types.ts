@@ -14,11 +14,12 @@ export type Product = {
   stock_count: number;
   status: ProductStatus;
   featured: boolean;
+  checkout_url: string | null;
   created_at: string;
 };
 
 export const PRODUCT_COLUMNS =
-  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,created_at";
+  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,created_at";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toProduct(r: any): Product {
@@ -29,6 +30,7 @@ export function toProduct(r: any): Product {
     specs: r.specs && typeof r.specs === "object" ? r.specs : {},
     image_urls: Array.isArray(r.image_urls) ? r.image_urls : [],
     description: r.description ?? "",
+    checkout_url: r.checkout_url ?? null,
   } as Product;
 }
 

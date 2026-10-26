@@ -6,7 +6,14 @@ export const STORE = {
   shippingFlat: 60,
   freeShippingOver: 800,
   lowStock: 3,
+  deliveryTime: "1–5 business days",
+  email: "support@crolina.shop",
+  instagram: "crolina_za",
+  facebook: "Crolina",
 };
+
+export const instagramUrl = `https://www.instagram.com/${STORE.instagram}`;
+export const facebookUrl = `https://www.facebook.com/${STORE.facebook}`;
 
 export const PROVINCES = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",

@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type CartLine = {
-  id: string; slug: string; name: string; price: number; image: string | null; qty: number; max: number;
+  id: string; slug: string; name: string; price: number; image: string | null; qty: number; max: number; link?: string | null;
 };
 
 type CartState = {
