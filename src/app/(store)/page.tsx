@@ -3,7 +3,7 @@ import HeroCards from "@/components/store/HeroCards";
 import ProductCard from "@/components/store/ProductCard";
 import { getCategories, getProducts } from "@/lib/catalog";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Home() {
   const [featured, categories] = await Promise.all([getProducts({ featured: true, limit: 8 }), getCategories()]);
