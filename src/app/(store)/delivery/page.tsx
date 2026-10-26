@@ -15,12 +15,12 @@ export default function DeliveryPage() {
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-line p-5">
-          <p className="text-sm text-muted">Delivery in 1–3 business days</p>
+          <p className="text-sm font-medium text-muted">Express · 1–3 business days</p>
           <p className="mt-1 text-2xl font-medium">{formatZAR(STORE.expressShipping)}</p>
           <p className="mt-2 text-sm text-muted">Estimated delivery after payment confirmation.</p>
         </div>
         <div className="rounded-2xl border border-line p-5">
-          <p className="text-sm text-muted">Delivery in 1–5 business days</p>
+          <p className="text-sm font-medium text-muted">Standard · 1–5 business days</p>
           <p className="mt-1 text-2xl font-medium">{formatZAR(STORE.standardShipping)}</p>
           <p className="mt-2 text-sm text-muted">Estimated delivery after payment confirmation.</p>
         </div>
