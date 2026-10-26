@@ -5,6 +5,8 @@ export const STORE = {
   whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
   standardShipping: 150,
   expressShipping: 100,
+  /** Legacy fallback for components that still display a single delivery rate. */
+  shippingFlat: 150,
   freeShippingOver: 2500,
   freeShippingMinItems: 5,
   lowStock: 3,
