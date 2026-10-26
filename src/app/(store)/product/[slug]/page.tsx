@@ -109,8 +109,6 @@ export default async function ProductPage({ params }: Props) {
                 : <Link key={title} href={href} className="block">{content}</Link>;
             })}
           </nav>
-            ))}
-          </div>
 
           <div className="mt-6 border-t border-line">
             {p.description && <Accordion title="Description"><p className="whitespace-pre-line">{p.description}</p></Accordion>}
