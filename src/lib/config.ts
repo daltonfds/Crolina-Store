@@ -3,14 +3,16 @@ export const STORE = {
   tagline: "Essential goods | South Africa",
   url: process.env.NEXT_PUBLIC_STORE_URL || "https://www.crolina.shop",
   whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
-  shippingFlat: 60,
-  freeShippingOver: 800,
+  standardShipping: 100,
+  expressShipping: 150,
+  freeShippingOver: 2500,
+  freeShippingMinItems: 5,
   lowStock: 3,
   deliveryTime: "1–5 business days",
   email: "support@crolina.shop",
   instagram: "crolina_za",
   facebook: "Crolina",
-};
+} as const;
 
 export const instagramUrl = `https://www.instagram.com/${STORE.instagram}`;
 export const facebookUrl = `https://www.facebook.com/${STORE.facebook}`;
@@ -22,8 +24,20 @@ export const PROVINCES = [
 
 export const CATEGORY_SUGGESTIONS = ["Women", "Men", "Accessories", "Home", "Beauty", "Essentials"];
 
-export function shippingFor(subtotal: number) {
-  return subtotal <= 0 || subtotal >= STORE.freeShippingOver ? 0 : STORE.shippingFlat;
+export type DeliveryMethod = "standard" | "express";
+
+export function qualifiesForFreeShipping(subtotalAfterDiscounts: number, itemCount: number) {
+  return subtotalAfterDiscounts >= STORE.freeShippingOver || itemCount >= STORE.freeShippingMinItems;
+}
+
+export function shippingFor(
+  subtotalAfterDiscounts: number,
+  itemCount = 0,
+  method: DeliveryMethod = "standard",
+) {
+  if (subtotalAfterDiscounts <= 0) return 0;
+  if (qualifiesForFreeShipping(subtotalAfterDiscounts, itemCount)) return 0;
+  return method === "express" ? STORE.expressShipping : STORE.standardShipping;
 }
 
 export function whatsappUrl(text: string) {
