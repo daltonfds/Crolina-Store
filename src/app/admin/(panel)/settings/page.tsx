@@ -21,7 +21,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
         <Field name="bank_name" label="Bank" />
         <Field name="account_number" label="Account number" />
         <Field name="branch_code" label="Branch code" />
-        <Field name="payment_link_url" label="Online payment link (optional)" />
+        <Field name="payment_link_url" label="Default payment link (PayFast, Paystack…) — used when a product has no link of its own" />
         <Field name="eft_instructions" label="Extra payment instructions (optional)" area />
         <button className="btn btn-primary w-full">Save settings</button>
       </form>

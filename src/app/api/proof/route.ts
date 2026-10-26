@@ -4,7 +4,11 @@ import { createServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
 
-const TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf" };
+const TYPES: Record<string, string> = {
+  "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/heic": "heic", "image/heif": "heif",
+  "application/pdf": "pdf", "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx", "text/plain": "txt",
+};
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
@@ -14,7 +18,7 @@ export async function POST(req: Request) {
   if (!/^CR-[A-F0-9]{10}$/.test(reference) || !(file instanceof File)) return fail("Invalid upload.", 400);
   if (file.size > 4 * 1024 * 1024) return fail("File is too large (max 4 MB).", 413);
   const ext = TYPES[file.type];
-  if (!ext) return fail("Please upload a JPG, PNG, WebP or PDF file.", 415);
+  if (!ext) return fail("Please upload a photo, PDF, Word document or text file.", 415);
 
   const sb = createServiceClient();
   const { data: order } = await sb.from("orders").select("id,status,order_reference").eq("order_reference", reference).maybeSingle();

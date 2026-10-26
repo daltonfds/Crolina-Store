@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
+import AutoPay from "@/components/store/AutoPay";
 import ProofUpload from "@/components/store/ProofUpload";
-import { whatsappUrl } from "@/lib/config";
+import { STORE, whatsappUrl } from "@/lib/config";
 import { formatZAR } from "@/lib/money";
 import { createServiceClient } from "@/lib/supabase/service";
 import { statusMeta } from "@/lib/types";
@@ -8,7 +9,7 @@ import { statusMeta } from "@/lib/types";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Your order", robots: { index: false } };
 
-export default async function OrderPage({ params }: { params: Promise<{ reference: string }> }) {
+export default async function OrderPage({ params, searchParams }: { params: Promise<{ reference: string }>; searchParams: Promise<{ pay?: string }> }) {
   const reference = decodeURIComponent((await params).reference).toUpperCase();
   if (!/^CR-[A-F0-9]{10}$/.test(reference)) notFound();
   const sb = createServiceClient();
@@ -18,6 +19,7 @@ export default async function OrderPage({ params }: { params: Promise<{ referenc
     sb.from("order_items").select("product_name,unit_price_zar,quantity,line_total_zar").eq("order_id", order.id),
     sb.from("bank_details").select("*").eq("is_active", true).limit(1).maybeSingle(),
   ]);
+  const autoPay = (await searchParams).pay === "1" && order.status === "pending_payment" && order.payment_method === "payment_link" && !!order.payment_link_url;
   const meta = statusMeta(order.status);
   const open = ["pending_payment", "proof_submitted"].includes(order.status);
   const addr = (order.shipping_address ?? {}) as Record<string, string>;
@@ -30,13 +32,15 @@ export default async function OrderPage({ params }: { params: Promise<{ referenc
         <span className={`mt-2 inline-block rounded-full px-3 py-1 text-xs font-medium ${meta.badge}`}>{meta.label}</span>
       </div>
 
+      {autoPay && <AutoPay url={order.payment_link_url} />}
+
       {open && (
         <section className="card space-y-4 p-5">
           {order.payment_method === "payment_link" && order.payment_link_url ? (
             <>
               <h2 className="text-base font-medium">Pay online</h2>
               <a href={order.payment_link_url} target="_blank" rel="noreferrer" className="btn btn-primary w-full">Pay {formatZAR(order.total_zar)}</a>
-              <p className="text-xs text-muted">Use {reference} as your payment reference.</p>
+              <p className="text-xs text-muted">Use {reference} as your payment reference. After paying you can upload your proof below.</p>
             </>
           ) : (
             <>
@@ -78,6 +82,7 @@ export default async function OrderPage({ params }: { params: Promise<{ referenc
       <section className="card p-5 text-sm">
         <h2 className="mb-2 text-base font-medium">Delivery to</h2>
         <p>{[addr.street, addr.suburb, addr.city, addr.province, addr.postal_code].filter(Boolean).join(", ")}</p>
+        <p className="mt-2 text-muted">Delivery in {STORE.deliveryTime}, nationwide, after your payment is confirmed.</p>
       </section>
       {wa && <a href={wa} target="_blank" rel="noreferrer" className="block text-center text-sm text-muted underline">Need help? Chat on WhatsApp</a>}
     </div>

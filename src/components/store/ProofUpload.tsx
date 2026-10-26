@@ -26,10 +26,10 @@ export default function ProofUpload({ reference }: { reference: string }) {
   return (
     <div>
       <label className="btn btn-outline w-full cursor-pointer">
-        <Upload size={18} /> {busy ? "Uploading…" : "Upload proof of payment"}
-        <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="sr-only" disabled={busy} onChange={onChange} />
+        <Upload size={18} /> {busy ? "Uploading…" : "Upload proof of payment (photo or document)"}
+        <input type="file" accept="image/*,.pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" className="sr-only" disabled={busy} onChange={onChange} />
       </label>
-      <p className="mt-2 text-xs text-muted">JPG, PNG, WebP or PDF, up to 4 MB.</p>
+      <p className="mt-2 text-xs text-muted">Photo or document (JPG, PNG, HEIC, PDF, Word or TXT), up to 4 MB.</p>
       {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
     </div>
   );

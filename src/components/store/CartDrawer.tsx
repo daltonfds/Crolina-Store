@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ShoppingBag, X } from "lucide-react";
 import { CartLines, CartTotals } from "./CartLines";
+import { WhatsAppCartButton } from "./WhatsAppButtons";
 import { useCart, useMounted } from "@/lib/cart";
 
 export default function CartDrawer() {
@@ -29,6 +30,7 @@ export default function CartDrawer() {
             <div className="space-y-3 border-t border-line p-4">
               <CartTotals lines={lines} />
               <Link href="/checkout" onClick={close} className="btn btn-primary w-full">Checkout</Link>
+              <WhatsAppCartButton />
               <Link href="/cart" onClick={close} className="btn btn-outline w-full">View bag</Link>
             </div>
           </>

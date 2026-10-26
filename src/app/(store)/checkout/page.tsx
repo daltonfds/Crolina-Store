@@ -10,7 +10,7 @@ export default async function CheckoutPage() {
   return (
     <div>
       <h1 className="mb-5 text-2xl font-medium">Checkout</h1>
-      <CheckoutForm paymentLinkAvailable={(data?.length ?? 0) > 0} />
+      <CheckoutForm storeLinkAvailable={(data?.length ?? 0) > 0} />
     </div>
   );
 }

@@ -3,15 +3,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CartTotals } from "./CartLines";
-import { PROVINCES, shippingFor } from "@/lib/config";
+import { PROVINCES, STORE, shippingFor } from "@/lib/config";
 import { cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
 
-export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvailable: boolean }) {
+export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailable: boolean }) {
   const router = useRouter();
   const mounted = useMounted();
   const { lines, clear } = useCart();
-  const [method, setMethod] = useState<"eft" | "payment_link">("eft");
+  const [choice, setChoice] = useState<"eft" | "payment_link">("eft");
+  const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,11 +25,15 @@ export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvai
       </div>
     );
 
+  // A payment link is available when the store has a default link, or the bag holds a single product that has its own link.
+  const linkOk = storeLinkAvailable || (lines.length === 1 && !!lines[0].link);
+  const method = choice === "payment_link" && linkOk ? "payment_link" : "eft";
   const subtotal = cartSubtotal(lines);
   const total = subtotal + shippingFor(subtotal);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!accepted) { setError("Please accept the Terms, Privacy policy and Returns & warranty to continue."); return; }
     setError("");
     setBusy(true);
     const f = new FormData(e.currentTarget);
@@ -43,12 +48,13 @@ export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvai
           address: { street: v("street"), suburb: v("suburb"), city: v("city"), province: v("province"), postal_code: v("postal_code") },
           notes: v("notes"),
           payment_method: method,
+          accepted: true,
         }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
       clear();
-      router.push(`/order/${data.reference}`);
+      router.push(`/order/${data.reference}${data.paymentUrl ? "?pay=1" : ""}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setBusy(false);
@@ -69,6 +75,7 @@ export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvai
 
         <section className="space-y-3">
           <h2 className="text-base font-medium">Delivery address</h2>
+          <p className="text-sm text-muted">Nationwide delivery in {STORE.deliveryTime}, after your payment is confirmed.</p>
           <div><label className="label" htmlFor="street">Street address</label><input id="street" name="street" required autoComplete="street-address" className="field" /></div>
           <div className="grid gap-3 md:grid-cols-2">
             <div><label className="label" htmlFor="suburb">Suburb</label><input id="suburb" name="suburb" className="field" /></div>
@@ -88,15 +95,20 @@ export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvai
         <section className="space-y-3">
           <h2 className="text-base font-medium">Payment</h2>
           <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
-            <input type="radio" name="pm" checked={method === "eft"} onChange={() => setMethod("eft")} className="mt-1" />
-            <span><span className="block text-sm font-medium">EFT / bank transfer</span><span className="text-sm text-muted">You&apos;ll see our bank details after you place the order. Upload your proof of payment on the order page.</span></span>
+            <input type="radio" name="pm" checked={method === "eft"} onChange={() => setChoice("eft")} className="mt-1" />
+            <span><span className="block text-sm font-medium">EFT / bank transfer</span><span className="text-sm text-muted">You&apos;ll see our bank details after you place the order. Then upload your proof of payment (photo or document).</span></span>
           </label>
-          {paymentLinkAvailable && (
-            <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
-              <input type="radio" name="pm" checked={method === "payment_link"} onChange={() => setMethod("payment_link")} className="mt-1" />
-              <span><span className="block text-sm font-medium">Pay online</span><span className="text-sm text-muted">Pay securely with our payment link after you place the order.</span></span>
-            </label>
-          )}
+          <label className={`card flex items-start gap-3 p-4 has-[:checked]:border-ink ${linkOk ? "cursor-pointer" : "opacity-50"}`}>
+            <input type="radio" name="pm" disabled={!linkOk} checked={method === "payment_link"} onChange={() => setChoice("payment_link")} className="mt-1" />
+            <span>
+              <span className="block text-sm font-medium">Payment link</span>
+              <span className="text-sm text-muted">
+                {linkOk
+                  ? "Pay on a secure payment page (PayFast, Paystack, Google Pay or Apple Pay, depending on the link). You'll be taken there as soon as you confirm."
+                  : "Not available for the items in your bag. Choose EFT or order via WhatsApp."}
+              </span>
+            </span>
+          </label>
         </section>
       </div>
 
@@ -108,8 +120,16 @@ export default function CheckoutForm({ paymentLinkAvailable }: { paymentLinkAvai
           ))}
         </ul>
         <CartTotals lines={lines} />
+        <label className="flex cursor-pointer items-start gap-3 text-sm">
+          <input type="checkbox" required checked={accepted} onChange={(e) => setAccepted(e.target.checked)} className="mt-1 h-4 w-4 shrink-0" />
+          <span>
+            I have read and accept the <Link href="/terms" target="_blank" className="underline">Terms of sale</Link>,{" "}
+            <Link href="/privacy" target="_blank" className="underline">Privacy policy</Link> and{" "}
+            <Link href="/returns" target="_blank" className="underline">Returns &amp; warranty</Link>.
+          </span>
+        </label>
         {error && <p role="alert" className="rounded-xl bg-soft-pink px-3 py-2 text-sm text-deep-pink">{error}</p>}
-        <button type="submit" disabled={busy} className="btn btn-primary w-full">{busy ? "Placing order…" : `Place order · ${formatZAR(total)}`}</button>
+        <button type="submit" disabled={busy || !accepted} className="btn btn-primary w-full">{busy ? "Placing order…" : `Confirm order · ${formatZAR(total)}`}</button>
         <p className="text-center text-xs text-muted">Final totals are confirmed by our server.</p>
       </aside>
     </form>

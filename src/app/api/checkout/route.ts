@@ -22,6 +22,7 @@ const schema = z.object({
   }),
   notes: z.string().trim().max(500).default(""),
   payment_method: z.enum(["eft", "payment_link"]),
+  accepted: z.literal(true),
 });
 
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
   d.items.forEach((i) => qty.set(i.id, Math.min(10, (qty.get(i.id) ?? 0) + i.qty)));
   const ids = [...qty.keys()];
 
-  const { data: rows, error } = await sb.from("products").select("id,name,price_zar,status,stock_count").in("id", ids);
+  const { data: rows, error } = await sb.from("products").select("id,name,price_zar,status,stock_count,checkout_url").in("id", ids);
   if (error || !rows || rows.length !== ids.length) return fail("Some items in your bag are no longer available.", 409);
 
   let subtotal = 0;
@@ -49,10 +50,15 @@ export async function POST(req: Request) {
 
   let linkUrl: string | null = null;
   if (d.payment_method === "payment_link") {
-    const { data: bd } = await sb.from("bank_details").select("payment_link_url").eq("is_active", true)
-      .not("payment_link_url", "is", null).limit(1).maybeSingle();
-    linkUrl = bd?.payment_link_url ?? null;
-    if (!linkUrl) return fail("Online payment isn't available right now. Please choose EFT.");
+    // One product with its own link: use it. Otherwise use the store-wide link from Settings.
+    const own = rows.length === 1 ? (rows[0].checkout_url as string | null) : null;
+    if (own) linkUrl = own;
+    else {
+      const { data: bd } = await sb.from("bank_details").select("payment_link_url").eq("is_active", true)
+        .not("payment_link_url", "is", null).limit(1).maybeSingle();
+      linkUrl = bd?.payment_link_url ?? null;
+    }
+    if (!linkUrl) return fail("A payment link isn't available for these items. Please choose EFT or order via WhatsApp.");
   }
 
   const { data, error: rpcError } = await sb.rpc("create_store_order", {
@@ -69,10 +75,12 @@ export async function POST(req: Request) {
   });
   if (rpcError || !data) return fail(`We couldn't place your order. ${rpcError?.message ?? ""}`.trim(), 409);
 
+  await sb.from("orders").update({ terms_accepted_at: new Date().toISOString() }).eq("order_reference", data.order_reference);
+
   await sendOrderEmails({
     reference: data.order_reference, name: d.customer.name, email: d.customer.email,
     total: Number(data.total_zar), method: d.payment_method,
   }).catch(() => undefined);
 
-  return NextResponse.json({ reference: data.order_reference });
+  return NextResponse.json({ reference: data.order_reference, paymentUrl: linkUrl });
 }

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { CartLines, CartTotals } from "@/components/store/CartLines";
+import { WhatsAppCartButton } from "@/components/store/WhatsAppButtons";
 import { useCart, useMounted } from "@/lib/cart";
 
 export default function CartPage() {
@@ -23,6 +24,7 @@ export default function CartPage() {
       <aside className="card h-fit space-y-4 p-5">
         <CartTotals lines={lines} />
         <Link href="/checkout" className="btn btn-primary w-full">Checkout</Link>
+        <WhatsAppCartButton />
         <Link href="/shop" className="block text-center text-sm text-muted underline">Continue shopping</Link>
       </aside>
     </div>
