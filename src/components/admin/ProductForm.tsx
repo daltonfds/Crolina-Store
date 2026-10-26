@@ -120,6 +120,15 @@ export default function ProductForm({ product, categories }: { product?: Product
         <textarea id="specs" name="specs" rows={3} defaultValue={specsText} placeholder={"Material: Cotton\nSize: M"} className="field" />
       </div>
 
+      <details className="rounded-2xl border border-line p-4" open={Boolean(product?.checkout_url)}>
+        <summary className="cursor-pointer text-sm font-medium">Payment link (optional)</summary>
+        <div className="mt-3">
+          <label className="label" htmlFor="checkout_url">Checkout link for this product</label>
+          <input id="checkout_url" name="checkout_url" type="url" defaultValue={product?.checkout_url ?? ""} placeholder="https://payf.st/..." className="field" />
+          <p className="mt-1 text-xs text-muted">Paste a PayFast, Paystack or other payment link. Customers who choose “Payment link” at checkout are sent here when this is the only product in their bag.</p>
+        </div>
+      </details>
+
       <div>
         <p className="label">Status</p>
         <div className="flex flex-wrap gap-2">

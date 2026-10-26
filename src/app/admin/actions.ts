@@ -41,6 +41,7 @@ const productSchema = z.object({
   condition: z.enum(["New", "Used - Like New", "Used"]),
   status: z.enum(["Active", "Draft", "Out of Stock"]),
   description: z.string().max(5000),
+  checkout: z.string().trim().url("Enter a valid payment link").refine((u) => u.startsWith("https://"), "The payment link must start with https://").nullable(),
 });
 
 export async function saveProduct(_: FormState, fd: FormData): Promise<FormState> {
@@ -49,6 +50,7 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     name: fd.get("name"), slug: fd.get("slug"), category: fd.get("category"),
     price: num(fd.get("price")), compare: num(fd.get("compare")), stock: num(fd.get("stock")),
     condition: fd.get("condition"), status: fd.get("status"), description: String(fd.get("description") ?? ""),
+    checkout: String(fd.get("checkout_url") ?? "").trim() || null,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
   const v = parsed.data;
@@ -71,6 +73,7 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     name: v.name, slug: v.slug, category: v.category, price_zar: v.price, compare_at_price_zar: v.compare,
     stock_count: v.stock, condition: v.condition, status, description: v.description, specs,
     image_urls: images, featured: fd.get("featured") === "on",
+    checkout_url: v.checkout,
   };
   const id = String(fd.get("id") ?? "");
   const { error } = id ? await sb.from("products").update(row).eq("id", id) : await sb.from("products").insert(row);
