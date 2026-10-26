@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import AutoPay from "@/components/store/AutoPay";
 import ProofUpload from "@/components/store/ProofUpload";
-import { STORE, whatsappUrl } from "@/lib/config";
+import { whatsappUrl } from "@/lib/config";
 import { formatZAR } from "@/lib/money";
 import { createServiceClient } from "@/lib/supabase/service";
 import { statusMeta } from "@/lib/types";
