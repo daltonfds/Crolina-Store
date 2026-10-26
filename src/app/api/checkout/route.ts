@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     p_customer_name: d.customer.name,
     p_customer_email: d.customer.email,
     p_customer_phone: d.customer.phone,
-    p_shipping_address: d.address,
+    p_shipping_address: { ...d.address, delivery_method: d.delivery_method },
     p_payment_method: d.payment_method,
     p_payment_link_url: linkUrl,
     p_customer_notes: d.notes || null,
