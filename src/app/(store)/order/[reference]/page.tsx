@@ -23,6 +23,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const meta = statusMeta(order.status);
   const open = ["pending_payment", "proof_submitted"].includes(order.status);
   const addr = (order.shipping_address ?? {}) as Record<string, string>;
+  const deliveryWindow = addr.delivery_method === "express" ? "1–3 business days" : "1–5 business days";
   const wa = whatsappUrl(`Hi Crolina, about my order ${reference}`);
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -82,7 +83,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
       <section className="card p-5 text-sm">
         <h2 className="mb-2 text-base font-medium">Delivery to</h2>
         <p>{[addr.street, addr.suburb, addr.city, addr.province, addr.postal_code].filter(Boolean).join(", ")}</p>
-        <p className="mt-2 text-muted">Delivery in {STORE.deliveryTime}, nationwide, after your payment is confirmed.</p>
+        <p className="mt-2 text-muted">Estimated delivery in {deliveryWindow}, nationwide, after your payment is confirmed.</p>
       </section>
       {wa && <a href={wa} target="_blank" rel="noreferrer" className="block text-center text-sm text-muted underline">Need help? Chat on WhatsApp</a>}
     </div>
