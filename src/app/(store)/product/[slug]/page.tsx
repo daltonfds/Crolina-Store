@@ -124,7 +124,7 @@ export default async function ProductPage({ params }: Props) {
               </Accordion>
             )}
             <Accordion title="Delivery information">
-              <p>Express delivery takes 1–3 business days and costs R100. Standard delivery takes 1–5 business days and costs R150.</p>
+              <p>Express delivery takes 1–3 business days and costs R150. Standard delivery takes 1–5 business days and costs R100.</p>
               <p className="mt-2">Get free delivery when your order contains 5 or more eligible items OR your product subtotal is R2,500 or more after discounts.</p>
               <p className="mt-2"><Link href="/delivery" className="font-medium underline">View delivery options and conditions</Link></p>
             </Accordion>
