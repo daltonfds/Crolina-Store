@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RotateCcw, ShieldCheck, Truck } from "lucide-react";
-import { STORE } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 const CARDS = [
