@@ -38,7 +38,7 @@ const productSchema = z.object({
   price: z.number({ error: "Enter a valid price" }).min(0).max(1_000_000),
   compare: z.number().min(0).max(1_000_000).nullable(),
   stock: z.number({ error: "Enter a valid stock quantity" }).int().min(0).max(100000),
-  condition: z.enum(["New", "Used - Like New", "Used"]),
+  condition: z.enum(["New", "Used - Like New", "Used", "Single item"]),
   status: z.enum(["Active", "Draft", "Out of Stock"]),
   description: z.string().max(5000),
   checkout: z.string().trim().url("Enter a valid payment link").refine((u) => u.startsWith("https://"), "The payment link must start with https://").nullable(),
@@ -65,13 +65,14 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     if (i > 0 && line.slice(i + 1).trim()) specs[line.slice(0, i).trim()] = line.slice(i + 1).trim();
   });
 
+  const stock = v.condition === "Single item" && v.stock > 0 ? 1 : v.stock;
   let status = v.status;
-  if (status === "Active" && v.stock <= 0) status = "Out of Stock";
-  if (status === "Out of Stock" && v.stock > 0) status = "Active";
+  if (status === "Active" && stock <= 0) status = "Out of Stock";
+  if (status === "Out of Stock" && stock > 0) status = "Active";
 
   const row = {
     name: v.name, slug: v.slug, category: v.category, price_zar: v.price, compare_at_price_zar: v.compare,
-    stock_count: v.stock, condition: v.condition, status, description: v.description, specs,
+    stock_count: stock, condition: v.condition, status, description: v.description, specs,
     image_urls: images, featured: fd.get("featured") === "on",
     checkout_url: v.checkout,
   };
