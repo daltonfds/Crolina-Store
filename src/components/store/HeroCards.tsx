@@ -5,7 +5,7 @@ import { RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const CARDS = [
-  { Icon: Truck, title: "Delivery options", text: "Standard R150 · 1–5 business days. Express R100 · 1–3 business days.", href: "/delivery" },
+  { Icon: Truck, title: "Delivery options", text: "Standard R100 · 1–5 business days. Express R150 · 1–3 business days.", href: "/delivery" },
   { Icon: RotateCcw, title: "Returns & warranty", text: "Clear guidance on returns, refunds and your consumer rights.", href: "/returns" },
   { Icon: ShieldCheck, title: "Order with confidence", text: "Clear payment steps and personal order confirmation.", href: "/terms" },
 ];
