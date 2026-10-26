@@ -70,7 +70,7 @@ export default async function ProductPage({ params }: Props) {
 
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="text-2xl font-medium">{formatZAR(p.price_zar)}</span>
-            {onSale && <span className="text-sm text-muted line-through">{formatZAR(p.compare_at_price_zar!)}</span>}
+            {onSale && <span className="text-sm font-medium text-red-600 line-through">{formatZAR(p.compare_at_price_zar!)}</span>}
             {onSale && <span className="rounded-full bg-soft-green px-3 py-1 text-xs font-medium text-deep-green">Save {formatZAR(saving)}</span>}
           </div>
           <p className={`mt-1 text-sm ${sold ? "text-danger" : low ? "text-deep-sand" : "text-deep-green"}`}>
@@ -96,18 +96,19 @@ export default async function ProductPage({ params }: Props) {
             <a href={wa} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-muted underline">Have a question? Ask us on WhatsApp</a>
           )}
 
-          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 rounded-2xl border border-line p-3 text-center sm:grid-cols-4 sm:gap-2 sm:p-3">
+          <nav aria-label="Shopping information" className="mt-6 divide-y divide-line border-y border-line">
             {[
-              { Icon: Truck, t: "Delivery options", s: "From R100 · See details" },
-              { Icon: RotateCcw, t: "7-day returns", s: "See policy" },
-              { Icon: ShieldCheck, t: "Safe payment", s: "EFT or link" },
-              { Icon: MessageCircle, t: "Support", s: "WhatsApp" },
-            ].map(({ Icon, t, s }) => (
-              <div key={t} className="flex min-w-0 flex-col items-center gap-1 px-1">
-                <Icon size={20} strokeWidth={1.5} className="text-deep-blue" />
-                <p className="text-xs font-medium leading-tight sm:text-[11px]">{t}</p>
-                <p className="text-[11px] leading-tight text-muted sm:text-[10px]">{s}</p>
-              </div>
+              { Icon: Truck, title: "Delivery options", href: "/delivery" },
+              { Icon: RotateCcw, title: "Returns & warranty", href: "/returns" },
+              { Icon: ShieldCheck, title: "Payment information", href: "/terms" },
+              { Icon: MessageCircle, title: "WhatsApp support", href: wa || "/terms", external: !!wa },
+            ].map(({ Icon, title, href, external }) => {
+              const content = <span className="flex items-center gap-3 py-4 text-sm font-medium"><Icon size={19} strokeWidth={1.6} className="text-deep-blue" /><span>{title}</span><span className="ml-auto text-muted" aria-hidden="true">↗</span></span>;
+              return external
+                ? <a key={title} href={href} target="_blank" rel="noreferrer" className="block">{content}</a>
+                : <Link key={title} href={href} className="block">{content}</Link>;
+            })}
+          </nav>
             ))}
           </div>
 
