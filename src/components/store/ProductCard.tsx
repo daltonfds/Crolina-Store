@@ -28,7 +28,7 @@ export default function ProductCard({ p }: { p: Product }) {
         <p className="mt-2 line-clamp-2 text-sm">{p.name}</p>
         <p className="text-sm font-medium">
           {formatZAR(p.price_zar)}
-          {onSale && <span className="ml-2 text-xs font-normal text-muted line-through">{formatZAR(p.compare_at_price_zar!)}</span>}
+          {onSale && <span className="ml-2 text-xs font-medium text-red-600 line-through">{formatZAR(p.compare_at_price_zar!)}</span>}
         </p>
       </Link>
       <button
