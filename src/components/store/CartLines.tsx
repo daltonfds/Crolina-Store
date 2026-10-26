@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import ProductThumb from "./ProductThumb";
-import { STORE, shippingFor } from "@/lib/config";
-import { cartSubtotal, useCart, type CartLine } from "@/lib/cart";
+import { STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
+import { cartCount, cartSubtotal, useCart, type CartLine } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
 
 export function CartLines({ onNavigate }: { onNavigate?: () => void }) {
@@ -36,23 +36,31 @@ export function CartLines({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export function CartTotals({ lines }: { lines: CartLine[] }) {
+export function CartTotals({ lines, deliveryMethod = "standard" }: { lines: CartLine[]; deliveryMethod?: DeliveryMethod }) {
   const subtotal = cartSubtotal(lines);
-  const shipping = shippingFor(subtotal);
-  const away = STORE.freeShippingOver - subtotal;
+  const itemCount = cartCount(lines);
+  const freeDelivery = qualifiesForFreeShipping(subtotal, itemCount);
+  const shipping = shippingFor(subtotal, itemCount, deliveryMethod);
+  const away = Math.max(0, STORE.freeShippingOver - subtotal);
+  const itemsAway = Math.max(0, STORE.freeShippingMinItems - itemCount);
   return (
     <div className="space-y-2 text-sm">
-      {subtotal > 0 && away > 0 && (
-        <div className="mb-3">
-          <p className="mb-1 text-xs text-muted">You&apos;re {formatZAR(away)} away from free delivery</p>
-          <div className="h-1.5 overflow-hidden rounded-full bg-surface">
-            <div className="h-full rounded-full bg-ink" style={{ width: `${Math.min(100, (subtotal / STORE.freeShippingOver) * 100)}%` }} />
+      {subtotal > 0 && !freeDelivery && (
+        <div className="mb-3 rounded-xl bg-[#f0f7ff] p-3">
+          <p className="text-xs text-[#1e4f9c]">
+            {itemsAway > 0
+              ? `Add ${itemsAway} more ${itemsAway === 1 ? "item" : "items"} OR spend ${formatZAR(away)} more to unlock free delivery.`
+              : `Your order qualifies for free delivery.`}
+          </p>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white">
+            <div className="h-full rounded-full bg-[#8ab7ed]" style={{ width: `${Math.min(100, (subtotal / STORE.freeShippingOver) * 100)}%` }} />
           </div>
         </div>
       )}
-      <div className="flex justify-between"><span className="text-muted">Subtotal</span><span>{formatZAR(subtotal)}</span></div>
+      <div className="flex justify-between"><span className="text-muted">Subtotal (after discounts)</span><span>{formatZAR(subtotal)}</span></div>
       <div className="flex justify-between"><span className="text-muted">Delivery</span><span>{shipping === 0 ? "Free" : formatZAR(shipping)}</span></div>
       <div className="flex justify-between border-t border-line pt-2 text-base font-medium"><span>Total</span><span>{formatZAR(subtotal + shipping)}</span></div>
+      <p className="text-xs text-muted">Free delivery applies to 5 or more eligible items OR a product subtotal of R2,500 or more after discounts.</p>
       <p className="text-xs text-muted">Prices include VAT where applicable.</p>
     </div>
   );
