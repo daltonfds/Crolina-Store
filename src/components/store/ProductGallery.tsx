@@ -39,7 +39,7 @@ export default function ProductGallery({ product, badge }: { product: GalleryPro
             </div>
           ))}
         </div>
-        {badge && <span className="absolute left-4 top-3 rounded-full bg-white px-3 py-1 text-xs font-medium shadow-sm md:left-3">{badge}</span>}
+        {badge && <span className={`absolute left-4 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm md:left-3 ${badge === "Single item" ? "bg-red-600 text-white" : "bg-white text-ink"}`}>{badge}</span>}
         {urls.length > 1 && (
           <span className="absolute bottom-3 right-4 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white md:right-3">
             {active + 1} / {urls.length}
