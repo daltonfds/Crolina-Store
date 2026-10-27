@@ -7,7 +7,6 @@ const PROFILE_KEY = "crolina-contact-profile";
 
 export default function ExitOfferPrompt() {
   const [open, setOpen] = useState(false);
-  const [profile, setProfile] = useState<Profile>({});
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -19,7 +18,7 @@ export default function ExitOfferPrompt() {
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}") as Profile;
-      setProfile(saved); setName(saved.name || ""); setEmail(saved.email || ""); setWhatsapp(saved.phone || "");
+      setName(saved.name || ""); setEmail(saved.email || ""); setWhatsapp(saved.phone || "");
     } catch {}
     const show = () => {
       if (opened.current || sessionStorage.getItem("crolina-exit-prompt-shown")) return;
