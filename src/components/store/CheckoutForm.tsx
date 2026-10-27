@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CartTotals } from "./CartLines";
 import PaymentMethodLogos from "./PaymentMethodLogos";
 import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
@@ -17,6 +17,20 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [contact, setContact] = useState({ name: "", email: "", phone: "" });
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("crolina-contact-profile") || "{}");
+      setContact({ name: saved.name || "", email: saved.email || "", phone: saved.phone || "" });
+    } catch { /* ignore invalid local profile */ }
+  }, []);
+
+  function updateContact(field: "name" | "email" | "phone", value: string) {
+    const next = { ...contact, [field]: value };
+    setContact(next);
+    try { localStorage.setItem("crolina-contact-profile", JSON.stringify(next)); } catch { /* ignore storage restrictions */ }
+  }
 
   if (!mounted) return <div className="h-64" />;
   if (lines.length === 0)
@@ -73,10 +87,10 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
       <div className="space-y-8">
         <section className="space-y-3">
           <h2 className="text-base font-medium">Contact</h2>
-          <div><label className="label" htmlFor="name">Full name</label><input id="name" name="name" required autoComplete="name" className="field" /></div>
+          <div><label className="label" htmlFor="name">Full name</label><input id="name" name="name" required autoComplete="name" className="field" value={contact.name} onChange={e => updateContact("name", e.target.value)} /></div>
           <div className="grid gap-3 md:grid-cols-2">
-            <div><label className="label" htmlFor="email">Email</label><input id="email" name="email" type="email" required autoComplete="email" className="field" /></div>
-            <div><label className="label" htmlFor="phone">Phone / WhatsApp</label><input id="phone" name="phone" type="tel" required autoComplete="tel" className="field" /></div>
+            <div><label className="label" htmlFor="email">Email</label><input id="email" name="email" type="email" required autoComplete="email" className="field" value={contact.email} onChange={e => updateContact("email", e.target.value)} /></div>
+            <div><label className="label" htmlFor="phone">Phone / WhatsApp</label><input id="phone" name="phone" type="tel" required autoComplete="tel" className="field" value={contact.phone} onChange={e => updateContact("phone", e.target.value)} /></div>
           </div>
         </section>
 
