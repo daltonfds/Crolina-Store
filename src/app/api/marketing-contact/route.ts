@@ -15,13 +15,19 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   const d = parsed.data;
-  const consentedAt = d.marketing_consent ? new Date().toISOString() : null;
-  const { error } = await createServiceClient().from("store_marketing_contacts").upsert({
+  const service = createServiceClient();
+  const normalizedEmail = d.email.toLowerCase();
+  const { data: existing } = await service.from("store_marketing_contacts")
+    .select("marketing_consent,consented_at").eq("email", normalizedEmail).maybeSingle();
+  // A later cookie choice must never revoke an earlier explicit marketing opt-in.
+  const marketingConsent = d.marketing_consent || existing?.marketing_consent === true;
+  const consentedAt = d.marketing_consent ? new Date().toISOString() : existing?.consented_at ?? null;
+  const { error } = await service.from("store_marketing_contacts").upsert({
     name: d.name || "Store visitor",
-    email: d.email.toLowerCase(),
+    email: normalizedEmail,
     whatsapp: d.whatsapp || null,
     source: d.source,
-    marketing_consent: d.marketing_consent,
+    marketing_consent: marketingConsent,
     consented_at: consentedAt,
     updated_at: new Date().toISOString(),
   }, { onConflict: "email" });
