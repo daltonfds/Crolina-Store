@@ -28,7 +28,8 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
     );
 
   // A payment link is available when the store has a default link, or the bag holds a single product that has its own link.
-  const linkOk = storeLinkAvailable || (lines.length === 1 && !!lines[0].link);
+  const specialR900Link = lines.length === 1 && lines[0].qty === 1 && lines[0].price === 900;
+  const linkOk = specialR900Link || storeLinkAvailable || (lines.length === 1 && !!lines[0].link);
   const method = choice === "payment_link" && linkOk ? "payment_link" : "eft";
   const subtotal = cartSubtotal(lines);
   const itemCount = cartCount(lines);
