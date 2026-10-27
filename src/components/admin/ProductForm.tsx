@@ -99,16 +99,15 @@ export default function ProductForm({ product, categories }: { product?: Product
 
       <div className="grid grid-cols-2 gap-3">
         <div><label className="label" htmlFor="price">Price (ZAR)</label><input id="price" name="price" required type="number" step="0.01" min="0" inputMode="decimal" defaultValue={product?.price_zar} placeholder="450.00" className="field" /></div>
-        <div><label className="label" htmlFor="stock">Stock</label><input id="stock" name="stock" required type="number" step="1" min="0" inputMode="numeric" value={condition === "Single item" && Number(stock) > 0 ? "1" : stock} onChange={(e) => setStock(e.target.value)} placeholder="25" className="field" /></div>
+        <div><label className="label" htmlFor="stock">Stock</label><input id="stock" name="stock" required type="number" step="1" min="0" inputMode="numeric" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="25" className="field" /></div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="label" htmlFor="compare">Compare-at price (optional)</label><input id="compare" name="compare" type="number" step="0.01" min="0" inputMode="decimal" defaultValue={product?.compare_at_price_zar ?? ""} placeholder="600.00" className="field" /></div>
         <div>
           <label className="label" htmlFor="condition">Condition</label>
-          <select id="condition" name="condition" value={condition} onChange={(e) => { const next = e.target.value; setCondition(next); if (next === "Single item" && (stock === "" || Number(stock) > 0)) setStock("1"); }} className="field">
-            <option value="New">New</option><option value="Used - Like New">Used like new</option><option value="Used">Used</option><option value="Single item">Single item</option>
+          <select id="condition" name="condition" value={condition} onChange={(e) => setCondition(e.target.value)} className="field">
+            <option value="New">New</option><option value="Used">Used</option><option value="Used - Like New">Used like new</option>
           </select>
-          {condition === "Single item" && <p className="mt-1 text-xs text-muted">Unique one-off item. Stock is limited to one unit; after it sells, keep stock at 0.</p>}
         </div>
       </div>
 
