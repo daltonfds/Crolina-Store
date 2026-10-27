@@ -25,6 +25,11 @@ export default function CookieBanner() {
       localStorage.setItem(KEY, new Date().toISOString());
       trackStoreEvent("cookie_accepted");
       if (email.trim()) {
+        try {
+          const saved = JSON.parse(localStorage.getItem("crolina-contact-profile") || "{}");
+          localStorage.setItem("crolina-contact-profile", JSON.stringify({ ...saved, email: email.trim() }));
+          window.dispatchEvent(new Event("crolina-contact-updated"));
+        } catch { /* email can still be submitted even if storage is unavailable */ }
         await fetch("/api/marketing-contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
