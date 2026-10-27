@@ -51,7 +51,7 @@ export default async function ProductPage({ params }: Props) {
   const wa = whatsappUrl(`Hi Crolina, I'm interested in: ${p.name}`);
   const specs = Object.entries(p.specs);
   const highlights = ([["Condition", p.condition], ...specs] as [string, string][]).slice(0, 4);
-  const badge = sold ? undefined : onSale ? "Sale" : p.featured ? "Best seller" : undefined;
+  const badge = sold ? undefined : p.stock_count === 1 ? "Single item" : onSale ? "Sale" : p.featured ? "Best seller" : undefined;
   const low = !sold && p.stock_count <= STORE.lowStock;
 
   return (
