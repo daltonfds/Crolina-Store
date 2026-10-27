@@ -46,19 +46,34 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           ) : (
             <>
               <h2 className="text-base font-medium">Pay by EFT</h2>
-              {bank?.account_number ? (
-                <dl className="divide-y divide-line rounded-xl border border-line text-sm">
-                  {[
-                    ["Account name", bank.account_name], ["Bank", bank.bank_name], ["Account number", bank.account_number],
-                    ["Branch code", bank.branch_code], ["Payment reference", reference], ["Amount", formatZAR(order.total_zar)],
-                  ].filter(([, v]) => v).map(([k, v]) => (
-                    <div key={k as string} className="flex justify-between gap-4 px-4 py-2.5"><dt className="text-muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>
-                  ))}
-                </dl>
-              ) : (
-                <p className="text-sm text-muted">Our bank details are being confirmed. Message us and we&apos;ll send them right away.</p>
-              )}
-              {bank?.eft_instructions && <p className="whitespace-pre-line text-sm text-muted">{bank.eft_instructions}</p>}
+              <div className="space-y-3">
+                <div className="rounded-xl border border-line p-4">
+                  <h3 className="mb-2 text-sm font-semibold">FNB</h3>
+                  <dl className="divide-y divide-line text-sm">
+                    {[
+                      ["Account name", "Noluthando khethani"],
+                      ["Account number", "63221498769"],
+                      ["Amount to pay", formatZAR(order.total_zar)],
+                      ["Payment reference", reference],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-4 py-2"><dt className="text-muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>
+                    ))}
+                  </dl>
+                </div>
+                <div className="rounded-xl border border-line p-4">
+                  <h3 className="mb-2 text-sm font-semibold">Standard Bank</h3>
+                  <dl className="divide-y divide-line text-sm">
+                    {[
+                      ["Account number", "402152778"],
+                      ["Payment reference", "0722958915"],
+                      ["Amount to pay", formatZAR(order.total_zar)],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-4 py-2"><dt className="text-muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>
+                    ))}
+                  </dl>
+                </div>
+                {bank?.eft_instructions && <p className="whitespace-pre-line text-sm text-muted">{bank.eft_instructions}</p>}
+              </div>
             </>
           )}
           <ProofUpload reference={reference} />
