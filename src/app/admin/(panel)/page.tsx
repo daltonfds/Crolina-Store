@@ -145,7 +145,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       </section>
 
       <section>
-        <div className="mb-2"><h2 className="font-medium">Captured contacts</h2><p className="text-sm text-muted">Emails collected from cookie consent and exit prompts. Marketing messages are permitted only for visitors who opted in.</p></div>
+        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2"><div><h2 className="font-medium">Captured contacts</h2><p className="text-sm text-muted">Emails collected from cookie consent and exit prompts. Marketing messages are permitted only for visitors who opted in.</p></div><Link href="/admin/contacts" className="text-sm text-muted underline">View all contacts</Link></div>
         <div className="card divide-y divide-line">
           {(contactsResult.data ?? []).length === 0 && <p className="p-5 text-sm text-muted">No contact details captured yet.</p>}
           {(contactsResult.data ?? []).map((contact, i) => <div key={i} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
