@@ -3,6 +3,8 @@ import Footer from "@/components/store/Footer";
 import BottomNav from "@/components/store/BottomNav";
 import CartDrawer from "@/components/store/CartDrawer";
 import CookieBanner from "@/components/store/CookieBanner";
+import StoreAnalytics from "@/components/store/StoreAnalytics";
+import ExitOfferPrompt from "@/components/store/ExitOfferPrompt";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +15,8 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <BottomNav />
       <CartDrawer />
       <CookieBanner />
+      <StoreAnalytics />
+      <ExitOfferPrompt />
     </>
   );
 }
