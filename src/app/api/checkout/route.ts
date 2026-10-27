@@ -52,9 +52,13 @@ export async function POST(req: Request) {
 
   let linkUrl: string | null = null;
   if (d.payment_method === "payment_link") {
-    // One product with its own link: use it. Otherwise use the store-wide link from Settings.
-    const own = rows.length === 1 ? (rows[0].checkout_url as string | null) : null;
-    if (own) linkUrl = own;
+    // A single R900 item uses the dedicated Escalepay checkout link.
+    const singleItemQty = [...qty.values()][0];
+    const isR900SingleItem = rows.length === 1 && singleItemQty === 1 && Number(rows[0].price_zar) === 900;
+    if (isR900SingleItem) linkUrl = "https://checkout.escalepay.com/6000920";
+    // Other single products use their own link; otherwise use the store-wide link from Settings.
+    const own = !isR900SingleItem && rows.length === 1 ? (rows[0].checkout_url as string | null) : null;
+    if (!linkUrl && own) linkUrl = own;
     else {
       const { data: bd } = await sb.from("bank_details").select("payment_link_url").eq("is_active", true)
         .not("payment_link_url", "is", null).limit(1).maybeSingle();
