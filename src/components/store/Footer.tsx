@@ -23,7 +23,7 @@ export default function Footer() {
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
         </nav>
-        <p className="text-xs text-muted">© {new Date().getFullYear()} {STORE.name}. All prices in ZAR.</p>
+        <p className="text-xs text-muted">© {new Date().getFullYear()} {STORE.name}. All rights reserved. All prices in ZAR.</p>
       </div>
     </footer>
   );
