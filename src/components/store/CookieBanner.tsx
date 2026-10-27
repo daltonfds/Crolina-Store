@@ -59,7 +59,7 @@ export default function CookieBanner() {
       </div>
       <label className="mt-3 flex items-start gap-2 text-xs text-muted">
         <input type="checkbox" className="mt-0.5" checked={updates} onChange={e => setUpdates(e.target.checked)} />
-        <span>Also send me product updates and special offers by email. Optional; I can unsubscribe anytime.</span>
+        <span>Also send me product updates and special offers by email. Optional; you can ask us to stop sending updates at any time.</span>
       </label>
       <button disabled={busy} onClick={accept} className="btn btn-primary mt-3 !h-10 w-full">{busy ? "Saving..." : "Accept cookies"}</button>
     </div>
