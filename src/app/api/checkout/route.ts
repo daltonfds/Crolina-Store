@@ -58,11 +58,13 @@ export async function POST(req: Request) {
     if (isR900SingleItem) linkUrl = "https://checkout.escalepay.com/6000920";
     // Other single products use their own link; otherwise use the store-wide link from Settings.
     const own = !isR900SingleItem && rows.length === 1 ? (rows[0].checkout_url as string | null) : null;
-    if (!linkUrl && own) linkUrl = own;
-    else {
-      const { data: bd } = await sb.from("bank_details").select("payment_link_url").eq("is_active", true)
-        .not("payment_link_url", "is", null).limit(1).maybeSingle();
-      linkUrl = bd?.payment_link_url ?? null;
+    if (!linkUrl) {
+      if (own) linkUrl = own;
+      else {
+        const { data: bd } = await sb.from("bank_details").select("payment_link_url").eq("is_active", true)
+          .not("payment_link_url", "is", null).limit(1).maybeSingle();
+        linkUrl = bd?.payment_link_url ?? null;
+      }
     }
     if (!linkUrl) return fail("A payment link isn't available for these items. Please choose EFT or order via WhatsApp.");
   }
