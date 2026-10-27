@@ -108,10 +108,10 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       <form className="flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-white p-3">
         <label htmlFor="period" className="text-sm text-muted">Reporting period</label>
-        <select id="period" name="period" defaultValue={period} className="field !h-10 max-w-xs" onChange="this.form.submit()">
+        <select id="period" name="period" defaultValue={period} className="field !h-10 max-w-xs">
           {periods.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
         </select>
-        <span className="text-xs text-muted">Sales are counted from paid, processing, shipped and completed orders.</span>
+        <button className="btn btn-secondary !h-10" type="submit">Apply</button><span className="text-xs text-muted">Sales are counted from paid, processing, shipped and completed orders.</span>
       </form>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
