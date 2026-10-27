@@ -34,7 +34,7 @@ export function trackStoreEvent(event_type: string, extra: Record<string, unknow
 export default function StoreAnalytics() {
   const pathname = usePathname();
   useEffect(() => {
-    trackStoreEvent(pathname.startsWith("/product/") ? "product_view" : "page_view");
+    trackStoreEvent((pathname.startsWith("/product/") || (pathname.startsWith("/shop/") && pathname !== "/shop")) ? "product_view" : pathname.startsWith("/order/") ? "checkout_completed" : "page_view");
   }, [pathname]);
 
   useEffect(() => {
