@@ -13,15 +13,19 @@ export default function ProductCard({ p }: { p: Product }) {
   const toggle = useFavs((s) => s.toggle);
   const sold = isSoldOut(p);
   const onSale = p.compare_at_price_zar && p.compare_at_price_zar > p.price_zar;
+  const singleItem = p.stock_count === 1 && !sold;
   return (
     <div className="relative">
       <Link href={`/product/${p.slug}`} className="block">
         <div className="relative">
           <ProductThumb product={p} className="aspect-square rounded-2xl" />
+          {singleItem && (
+            <span className="absolute left-2 top-2 rounded-full bg-ink px-2.5 py-1 text-[11px] font-semibold text-white">Single item</span>
+          )}
           {sold && (
             <span className="absolute inset-x-0 bottom-0 bg-white/85 py-1.5 text-center text-xs font-medium">Sold out</span>
           )}
-          {!sold && onSale && (
+          {!sold && !singleItem && onSale && (
             <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-deep-pink">Sale</span>
           )}
         </div>
