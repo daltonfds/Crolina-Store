@@ -39,12 +39,14 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     visitorsQuery = visitorsQuery.gte("created_at", from);
   }
 
-  const [ordersResult, active, low, recent, visitorResult] = await Promise.all([
+  const [ordersResult, active, low, recent, visitorResult, contactsResult, contactsCount] = await Promise.all([
     ordersQuery,
     sb.from("products").select("id", { count: "exact", head: true }).eq("status", "Active"),
     sb.from("products").select("id", { count: "exact", head: true }).eq("status", "Active").lte("stock_count", STORE.lowStock),
     sb.from("orders").select("id,order_reference,customer_name,total_zar,status,created_at").order("created_at", { ascending: false }).limit(5),
     visitorsQuery,
+    service.from("store_marketing_contacts").select("name,email,whatsapp,source,marketing_consent,created_at").order("created_at", { ascending: false }).limit(12),
+    service.from("store_marketing_contacts").select("id", { count: "exact", head: true }),
   ]);
 
   const orders = ordersResult.data ?? [];
@@ -95,6 +97,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     { label: "Orders in period", value: String(live.length), cls: "bg-white" },
     { label: "Unique visitors", value: String(uniqueVisitors), cls: "bg-white" },
     { label: "Page views", value: String(pageViews), cls: "bg-white" },
+    { label: "Saved contacts", value: String(contactsCount.count ?? 0), cls: "bg-white" },
     { label: "Active products", value: String(active.count ?? 0), cls: "bg-white" },
     { label: "Low stock", value: String(low.count ?? 0), cls: "bg-soft-sand text-deep-sand" },
   ];
@@ -114,7 +117,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         <button className="btn btn-secondary !h-10" type="submit">Apply</button><span className="text-xs text-muted">Sales are counted from paid, processing, shipped and completed orders.</span>
       </form>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-7">
         {cards.map(c => <div key={c.label} className={`rounded-2xl border border-line p-4 ${c.cls}`}><p className="text-xs opacity-70">{c.label}</p><p className="mt-1 text-xl font-medium">{c.value}</p></div>)}
       </div>
       <p className="text-xs text-muted">Tracked sessions: {sessions}. Visitor tracking starts after this feature is deployed; historical visits are not available.</p>
@@ -138,6 +141,17 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             <div><p className="text-sm font-medium">{o.order_reference}</p><p className="text-xs text-muted">{o.customer_name} · {formatZAR(o.total_zar)} · {dateLabel(new Date(o.created_at), period)}</p></div>
             <span className={`rounded-full px-3 py-1 text-xs ${statusMeta(o.status).badge}`}>{statusMeta(o.status).label}</span>
           </Link>)}
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-2"><h2 className="font-medium">Captured contacts</h2><p className="text-sm text-muted">Emails collected from cookie consent and exit prompts. Marketing messages are permitted only for visitors who opted in.</p></div>
+        <div className="card divide-y divide-line">
+          {(contactsResult.data ?? []).length === 0 && <p className="p-5 text-sm text-muted">No contact details captured yet.</p>}
+          {(contactsResult.data ?? []).map((contact, i) => <div key={i} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+            <div><p className="text-sm font-medium">{contact.name}</p><p className="text-sm text-muted">{contact.email}{contact.whatsapp ? " · " + contact.whatsapp : ""}</p></div>
+            <span className={"rounded-full px-2.5 py-1 text-xs " + (contact.marketing_consent ? "bg-soft-green text-deep-green" : "bg-soft-sand text-deep-sand")}>{contact.marketing_consent ? "Marketing opted in" : "No marketing consent"}</span>
+          </div>)}
         </div>
       </section>
 
