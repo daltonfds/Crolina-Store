@@ -27,7 +27,7 @@ function pagesToShow(page: number, total: number) {
 
 export default async function Supplements({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
-  const all = await getProducts({ categories: [...SUPPLEMENT_CATEGORIES] });
+  const all = await getProducts({ categories: [...SUPPLEMENT_CATEGORIES], includeSupplements: true });
 
   const goals = SUPPLEMENT_CATEGORIES.map((name) => {
     const items = all.filter((p) => p.category === name);

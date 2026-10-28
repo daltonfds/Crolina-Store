@@ -30,6 +30,10 @@ export default async function Categories() {
               <p className="mt-2 line-clamp-2">{name}</p>
             </Link>
           ))}
+          <Link href="/supplements" className="block">
+            <div className="mx-auto flex aspect-square w-full max-w-[7rem] items-center justify-center overflow-hidden rounded-full bg-surface text-xl font-medium text-muted">W</div>
+            <p className="mt-2">Wellness</p>
+          </Link>
         </div>
       )}
     </div>
