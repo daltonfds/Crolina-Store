@@ -108,7 +108,7 @@ export default async function ProductPage({ params }: Props) {
 
           <div id="buy-box" className="mt-6"><AddToCart product={p} supplement={supp} /></div>
           {supp && <div className="mt-1"><PaymentMethodLogos /></div>}
-          {supp && <p className="mt-3 text-center text-xs text-muted">Original product · Expiry date on pack · Delivery in {STORE.deliveryTime}</p>}
+          {supp && <p className="mt-3 text-center text-xs text-muted">Original product · Expiry date on pack · Free delivery in up to 3 business days</p>}
           {wa && (
             <a href={wa} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-muted underline">Have a question? Ask us on WhatsApp</a>
           )}
@@ -146,8 +146,7 @@ export default async function ProductPage({ params }: Props) {
               </Accordion>
             )}
             <Accordion title="Delivery information">
-              <p>Express delivery takes 1–3 business days and costs R150. Standard delivery takes 1–5 business days and costs R100.</p>
-              <p className="mt-2">Get free delivery when your order contains 5 or more eligible items OR your product subtotal is R2,500 or more after discounts.</p>
+              {supp ? <p>Supplements include free nationwide delivery in up to 3 business days after payment is confirmed.</p> : <><p>Express delivery takes 1–3 business days and costs R150. Standard delivery takes 1–5 business days and costs R100.</p><p className="mt-2">Get free delivery when your order contains 5 or more eligible items OR your product subtotal is R2,500 or more after discounts.</p></>}
               <p className="mt-2"><Link href="/delivery" className="font-medium underline">View delivery options and conditions</Link></p>
             </Accordion>
             <Accordion title="Returns & warranty">
