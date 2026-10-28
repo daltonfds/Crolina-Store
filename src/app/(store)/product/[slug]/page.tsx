@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MessageCircle, Minus, Plus, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import AddToCart from "@/components/store/AddToCart";
+import HelpsList from "@/components/store/HelpsList";
+import PaymentMethodLogos from "@/components/store/PaymentMethodLogos";
 import ProductCard from "@/components/store/ProductCard";
 import ProductGallery from "@/components/store/ProductGallery";
 import StickyBuy from "@/components/store/StickyBuy";
@@ -45,7 +47,7 @@ function Accordion({ title, children, open = false }: { title: string; children:
 export default async function ProductPage({ params }: Props) {
   const p = await getProduct((await params).slug);
   if (!p) notFound();
-  const related = await getProducts({ category: p.category, excludeId: p.id, limit: 4 });
+  const related = await getProducts({ category: p.category, excludeId: p.id, limit: 4, includeSupplements: isSupplement(p.category) });
   const sold = isSoldOut(p);
   const onSale = !!p.compare_at_price_zar && p.compare_at_price_zar > p.price_zar;
   const saving = onSale ? p.compare_at_price_zar! - p.price_zar : 0;
@@ -63,12 +65,15 @@ export default async function ProductPage({ params }: Props) {
           <ProductGallery
             product={{ id: p.id, name: p.name, category: p.category, image_urls: p.image_urls }}
             badge={badge}
+            dots={supp}
           />
         </div>
 
         <div className="min-w-0">
           <Link href={`/shop?category=${encodeURIComponent(p.category)}`} className="inline-block max-w-full rounded-full bg-surface px-3 py-1 text-xs text-muted">{supp && p.brand ? `${p.brand} · ` : ""}{p.category}</Link>
           <h1 className="mt-2 break-words text-xl font-medium leading-snug sm:text-2xl md:text-3xl">{p.name}</h1>
+
+          {supp && p.tagline && <p className="mt-2 text-sm italic text-ink/70">{p.tagline}</p>}
 
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="text-2xl font-medium">{formatZAR(p.price_zar)}</span>
@@ -85,7 +90,9 @@ export default async function ProductPage({ params }: Props) {
             {sold ? "Sold out" : low ? `Only ${p.stock_count} left in stock` : "In stock"}
           </p>
 
-          {highlights.length > 0 && (
+          {supp && p.benefits && <HelpsList text={p.benefits} />}
+
+          {highlights.length > 0 && !(supp && p.benefits) && (
             <div className="mt-5 grid grid-cols-2 gap-2">
               {highlights.map(([label, value], i) => {
                 const t = TINTS[i % TINTS.length];
@@ -99,7 +106,8 @@ export default async function ProductPage({ params }: Props) {
             </div>
           )}
 
-          <div id="buy-box" className="mt-6"><AddToCart product={p} /></div>
+          <div id="buy-box" className="mt-6"><AddToCart product={p} supplement={supp} /></div>
+          {supp && <div className="mt-1"><PaymentMethodLogos /></div>}
           {supp && <p className="mt-3 text-center text-xs text-muted">Original product · Expiry date on pack · Delivery in {STORE.deliveryTime}</p>}
           {wa && (
             <a href={wa} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-muted underline">Have a question? Ask us on WhatsApp</a>

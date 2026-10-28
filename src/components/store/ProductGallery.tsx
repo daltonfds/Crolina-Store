@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 type GalleryProduct = { id: string; name: string; category: string; image_urls: string[] };
 
-export default function ProductGallery({ product, badge }: { product: GalleryProduct; badge?: string }) {
+export default function ProductGallery({ product, badge, dots = false }: { product: GalleryProduct; badge?: string; dots?: boolean }) {
   const urls: (string | null)[] = product.image_urls.length ? product.image_urls : [null];
   const [active, setActive] = useState(0);
   const track = useRef<HTMLDivElement>(null);
@@ -47,8 +47,13 @@ export default function ProductGallery({ product, badge }: { product: GalleryPro
         )}
       </div>
 
+      {dots && urls.length > 1 && (
+        <div className="mt-3 flex justify-center gap-1.5 md:hidden" aria-hidden="true">
+          {urls.map((_, i) => <span key={i} className={cn("h-1.5 rounded-full transition-all", i === active ? "w-5 bg-ink" : "w-1.5 bg-line")} />)}
+        </div>
+      )}
       {urls.length > 1 && (
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div className={cn("mt-3 gap-2 overflow-x-auto pb-1", dots ? "hidden md:flex" : "flex")}>
           {urls.map((url, i) => (
             <button
               key={i}

@@ -122,7 +122,7 @@ export default function ProductForm({ product, categories }: { product?: Product
         <textarea id="specs" name="specs" rows={3} defaultValue={specsText} placeholder={"Material: Cotton\nSize: M"} className="field" />
       </div>
 
-      <details className="rounded-2xl border border-line p-4" open={Boolean(product?.brand || product?.pack_size || product?.flavour || product?.ingredients || product?.how_to_use || product?.warnings)}>
+      <details className="rounded-2xl border border-line p-4" open={Boolean(product?.tagline || product?.benefits || product?.bundle3_pct != null || product?.bundle6_pct != null || product?.brand || product?.pack_size || product?.flavour || product?.ingredients || product?.how_to_use || product?.warnings)}>
         <summary className="cursor-pointer text-sm font-medium">Supplement information (optional)</summary>
         <div className="mt-4 space-y-4">
           <div><label className="label" htmlFor="brand">Brand</label><input id="brand" name="brand" defaultValue={product?.brand ?? ""} className="field" /></div>
@@ -130,6 +130,13 @@ export default function ProductForm({ product, categories }: { product?: Product
             <div><label className="label" htmlFor="pack_size">Size</label><input id="pack_size" name="pack_size" defaultValue={product?.pack_size ?? ""} placeholder="60 capsules" className="field" /></div>
             <div><label className="label" htmlFor="flavour">Flavour</label><input id="flavour" name="flavour" defaultValue={product?.flavour ?? ""} className="field" /></div>
           </div>
+          <div><label className="label" htmlFor="tagline">Short summary (one line)</label><input id="tagline" name="tagline" maxLength={160} defaultValue={product?.tagline ?? ""} className="field" /></div>
+          <div><label className="label" htmlFor="benefits">Helps (one benefit per line)</label><textarea id="benefits" name="benefits" rows={4} defaultValue={product?.benefits ?? ""} placeholder={"Increase **Energy**\nSupport **Immunity**"} className="field" /><p className="mt-1 text-xs text-muted">Put the key word between **double asterisks** to make it bold.</p></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="label" htmlFor="bundle3_pct">3+ units: % off</label><input id="bundle3_pct" name="bundle3_pct" type="number" min="0" max="50" step="0.01" defaultValue={product?.bundle3_pct ?? ""} className="field" /></div>
+            <div><label className="label" htmlFor="bundle6_pct">6+ units: % off</label><input id="bundle6_pct" name="bundle6_pct" type="number" min="0" max="50" step="0.01" defaultValue={product?.bundle6_pct ?? ""} className="field" /></div>
+          </div>
+          <p className="-mt-2 text-xs text-muted">Leave empty for no bundle discount. The discount is applied to the whole order line. If this product uses its own payment link, make sure that link charges the discounted total.</p>
           <div><label className="label" htmlFor="ingredients">Ingredients &amp; supplement facts</label><textarea id="ingredients" name="ingredients" rows={4} defaultValue={product?.ingredients ?? ""} className="field" /></div>
           <div><label className="label" htmlFor="how_to_use">How to use</label><textarea id="how_to_use" name="how_to_use" rows={3} defaultValue={product?.how_to_use ?? ""} className="field" /></div>
           <div><label className="label" htmlFor="warnings">Warnings</label><textarea id="warnings" name="warnings" rows={3} defaultValue={product?.warnings ?? ""} placeholder="Leave empty to show the default warning." className="field" /></div>

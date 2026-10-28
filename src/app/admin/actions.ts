@@ -47,6 +47,10 @@ const productSchema = z.object({
   ingredients: z.string().max(5000),
   how_to_use: z.string().max(3000),
   warnings: z.string().max(3000),
+  tagline: z.string().max(160),
+  benefits: z.string().max(1500),
+  bundle3_pct: z.string().max(6).refine((s) => s.trim() === "" || (Number(s) >= 0 && Number(s) <= 50), "Bundle discounts must be between 0 and 50 percent."),
+  bundle6_pct: z.string().max(6).refine((s) => s.trim() === "" || (Number(s) >= 0 && Number(s) <= 50), "Bundle discounts must be between 0 and 50 percent."),
   checkout: z.string().trim().url("Enter a valid payment link").refine((u) => u.startsWith("https://"), "The payment link must start with https://").nullable(),
 });
 
@@ -58,6 +62,8 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     condition: fd.get("condition"), status: fd.get("status"), description: String(fd.get("description") ?? ""),
     brand: String(fd.get("brand") ?? ""), pack_size: String(fd.get("pack_size") ?? ""), flavour: String(fd.get("flavour") ?? ""),
     ingredients: String(fd.get("ingredients") ?? ""), how_to_use: String(fd.get("how_to_use") ?? ""), warnings: String(fd.get("warnings") ?? ""),
+    tagline: String(fd.get("tagline") ?? ""), benefits: String(fd.get("benefits") ?? ""),
+    bundle3_pct: String(fd.get("bundle3_pct") ?? ""), bundle6_pct: String(fd.get("bundle6_pct") ?? ""),
     checkout: String(fd.get("checkout_url") ?? "").trim() || null,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
@@ -83,6 +89,8 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     stock_count: stock, condition: v.condition, status, description: v.description, specs,
     brand: v.brand.trim() || null, pack_size: v.pack_size.trim() || null, flavour: v.flavour.trim() || null,
     ingredients: v.ingredients.trim() || null, how_to_use: v.how_to_use.trim() || null, warnings: v.warnings.trim() || null,
+    tagline: v.tagline.trim() || null, benefits: v.benefits.trim() || null,
+    bundle3_pct: v.bundle3_pct.trim() === "" ? null : Number(v.bundle3_pct), bundle6_pct: v.bundle6_pct.trim() === "" ? null : Number(v.bundle6_pct),
     image_urls: images, featured: fd.get("featured") === "on",
     checkout_url: v.checkout,
   };
