@@ -50,6 +50,7 @@ export default async function Shop({ searchParams }: { searchParams: Promise<SP>
         {categories.map((c) => (
           <Link key={c} href={href({ category: c })} className={cn("chip", sp.category === c && "chip-active")}>{c}</Link>
         ))}
+        <Link href="/supplements" className="chip">Wellness</Link>
       </div>
 
       <div className="flex flex-wrap gap-2 text-sm">
