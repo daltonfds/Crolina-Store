@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CartTotals } from "./CartLines";
 import PaymentMethodLogos from "./PaymentMethodLogos";
-import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
+import { PROVINCES, STORE, isSupplement, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { cartCount, cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
 import { lineTotal } from "@/lib/pricing";
@@ -48,8 +48,9 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const method = "payment_link" as const;
   const subtotal = cartSubtotal(lines);
   const itemCount = cartCount(lines);
-  const freeDelivery = qualifiesForFreeShipping(subtotal, itemCount);
-  const deliveryFee = shippingFor(subtotal, itemCount, deliveryMethod);
+  const supplementsOnly = lines.length > 0 && lines.every((line) => isSupplement(line.category ?? ""));
+  const freeDelivery = supplementsOnly || qualifiesForFreeShipping(subtotal, itemCount);
+  const deliveryFee = supplementsOnly ? 0 : shippingFor(subtotal, itemCount, deliveryMethod);
   const total = subtotal + deliveryFee;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -105,7 +106,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
 
         <section className="space-y-3">
           <h2 className="text-base font-medium">Delivery address</h2>
-          <p className="text-sm text-muted">Nationwide delivery in {deliveryMethod === "express" ? "1–3 business days" : "1–5 business days"}, after your payment is confirmed.</p>
+          <p className="text-sm text-muted">{supplementsOnly ? "Free nationwide delivery in up to 3 business days, after your payment is confirmed." : `Nationwide delivery in ${deliveryMethod === "express" ? "1–3 business days" : "1–5 business days"}, after your payment is confirmed.`}</p>
           <div><label className="label" htmlFor="street">Street address</label><input id="street" name="street" required autoComplete="street-address" className="field" /></div>
           <div className="grid gap-3 md:grid-cols-2">
             <div><label className="label" htmlFor="suburb">Suburb</label><input id="suburb" name="suburb" className="field" /></div>
@@ -127,16 +128,26 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
             <h2 className="text-base font-medium">Delivery method</h2>
             <Link href="/delivery" target="_blank" className="text-sm underline">Delivery information</Link>
           </div>
-          {freeDelivery && <p className="rounded-xl bg-[#f0f7ff] px-3 py-2 text-sm text-[#1e4f9c]">Your order qualifies for free delivery after discounts.</p>}
-          <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
-            <input type="radio" name="delivery_method" checked={deliveryMethod === "standard"} onChange={() => setDeliveryMethod("standard")} className="mt-1" />
-            <span className="flex-1"><span className="block text-sm font-medium">Standard</span><span className="block text-sm text-muted">1–5 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.standardShipping)}</span></span>
-          </label>
-          <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
-            <input type="radio" name="delivery_method" checked={deliveryMethod === "express"} onChange={() => setDeliveryMethod("express")} className="mt-1" />
-            <span className="flex-1"><span className="block text-sm font-medium">Express</span><span className="block text-sm text-muted">1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
-          </label>
-          <p className="text-xs text-muted">Free delivery applies when your order contains 5 or more eligible items OR the product subtotal after discounts is R2,500 or more.</p>
+          {supplementsOnly ? (
+            <div className="card border-[#b8dec9] bg-[#f2fbf5] p-4">
+              <span className="block text-sm font-medium text-[#17643b]">Free delivery</span>
+              <span className="block text-sm text-[#17643b]">Nationwide · up to 3 business days</span>
+              <span className="mt-1 block text-sm font-semibold text-[#17643b]">R0</span>
+            </div>
+          ) : (
+            <>
+              {freeDelivery && <p className="rounded-xl bg-[#f0f7ff] px-3 py-2 text-sm text-[#1e4f9c]">Your order qualifies for free delivery after discounts.</p>}
+              <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
+                <input type="radio" name="delivery_method" checked={deliveryMethod === "standard"} onChange={() => setDeliveryMethod("standard")} className="mt-1" />
+                <span className="flex-1"><span className="block text-sm font-medium">Standard</span><span className="block text-sm text-muted">1–5 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.standardShipping)}</span></span>
+              </label>
+              <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
+                <input type="radio" name="delivery_method" checked={deliveryMethod === "express"} onChange={() => setDeliveryMethod("express")} className="mt-1" />
+                <span className="flex-1"><span className="block text-sm font-medium">Express</span><span className="block text-sm text-muted">1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
+              </label>
+              <p className="text-xs text-muted">Free delivery applies when your order contains 5 or more eligible items OR the product subtotal after discounts is R2,500 or more.</p>
+            </>
+          )}
         </section>
 
         <section className="space-y-3">
