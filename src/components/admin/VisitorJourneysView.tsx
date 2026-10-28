@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Activity, ArrowDownRight, CheckCircle2, CircleDot, Clock3, CreditCard, ExternalLink, Eye, MousePointer2, Package, Search, ShoppingCart, UserRound, XCircle } from "lucide-react";
+import { Activity, ArrowDownRight, CheckCircle2, CircleDot, Clock3, CreditCard, ExternalLink, Eye, MousePointer2, Package, Search, ShoppingCart, UserRound } from "lucide-react";
 
 type EventRow = {
   id: string;
