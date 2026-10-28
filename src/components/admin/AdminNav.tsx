@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Receipt, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Receipt, Route, Settings, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/admin", label: "Dashboard", Icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", Icon: Package },
   { href: "/admin/orders", label: "Orders", Icon: Receipt },
+  { href: "/admin/visitors", label: "Journeys", Icon: Route },
   { href: "/admin/contacts", label: "Contacts", Icon: Users },
   { href: "/admin/settings", label: "Settings", Icon: Settings },
 ];
