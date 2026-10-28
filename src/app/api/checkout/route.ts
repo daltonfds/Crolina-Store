@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { PROVINCES, shippingFor, type DeliveryMethod } from "@/lib/config";
+import { PROVINCES, isSupplement, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { sendOrderEmails } from "@/lib/email";
 import { lineTotal } from "@/lib/pricing";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   d.items.forEach((i) => qty.set(i.id, Math.min(10, (qty.get(i.id) ?? 0) + i.qty)));
   const ids = [...qty.keys()];
 
-  const { data: rows, error } = await sb.from("products").select("id,name,price_zar,status,stock_count,checkout_url,bundle3_pct,bundle6_pct").in("id", ids);
+  const { data: rows, error } = await sb.from("products").select("id,name,category,price_zar,status,stock_count,checkout_url,bundle3_pct,bundle6_pct").in("id", ids);
   if (error || !rows || rows.length !== ids.length) return fail("Some items in your bag are no longer available.", 409);
 
   let subtotal = 0;
@@ -49,7 +49,8 @@ export async function POST(req: Request) {
     subtotal += lineTotal(Number(r.price_zar), q, { b3: r.bundle3_pct == null ? null : Number(r.bundle3_pct), b6: r.bundle6_pct == null ? null : Number(r.bundle6_pct) });
   }
   const itemCount = [...qty.values()].reduce((total, quantity) => total + quantity, 0);
-  const shipping = shippingFor(subtotal, itemCount, d.delivery_method as DeliveryMethod);
+  const supplementsOnly = rows.length > 0 && rows.every((row) => isSupplement(row.category));
+  const shipping = supplementsOnly ? 0 : shippingFor(subtotal, itemCount, d.delivery_method as DeliveryMethod);
 
   let linkUrl: string | null = null;
   if (d.payment_method === "payment_link") {
