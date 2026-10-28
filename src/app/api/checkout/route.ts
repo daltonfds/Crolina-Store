@@ -21,7 +21,7 @@ const schema = z.object({
     postal_code: z.string().trim().regex(/^\d{4}$/),
   }),
   notes: z.string().trim().max(500).default(""),
-  payment_method: z.enum(["eft", "payment_link"]),
+  payment_method: z.literal("payment_link"),
   delivery_method: z.enum(["standard", "express"]).default("standard"),
   accepted: z.literal(true),
 });
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         linkUrl = bd?.payment_link_url ?? null;
       }
     }
-    if (!linkUrl) return fail("A payment link isn't available for these items. Please choose EFT or order via WhatsApp.");
+    if (!linkUrl) return fail("A payment link isn't available for these items. Please contact us before placing your order.");
   }
 
   const { data, error: rpcError } = await sb.rpc("create_store_order", {

@@ -13,7 +13,6 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const router = useRouter();
   const mounted = useMounted();
   const { lines, clear } = useCart();
-  const [choice, setChoice] = useState<"eft" | "payment_link">("eft");
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
   const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -45,7 +44,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   // A payment link is available when the store has a default link, or the bag holds a single product that has its own link.
   const specialR900Link = lines.length === 1 && lines[0].qty === 1 && lines[0].price === 900;
   const linkOk = specialR900Link || storeLinkAvailable || (lines.length === 1 && !!lines[0].link);
-  const method = choice === "payment_link" && linkOk ? "payment_link" : "eft";
+  const method = "payment_link" as const;
   const subtotal = cartSubtotal(lines);
   const itemCount = cartCount(lines);
   const freeDelivery = qualifiesForFreeShipping(subtotal, itemCount);
@@ -54,6 +53,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!linkOk) { setError("Online payment is unavailable for these items. Please contact us before placing your order."); return; }
     if (!accepted) { setError("Please accept the Terms, Privacy policy and Returns & warranty to continue."); return; }
     setError("");
     setBusy(true);
@@ -140,22 +140,15 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
 
         <section className="space-y-3">
           <h2 className="text-base font-medium">Payment</h2>
-          <label className="card flex cursor-pointer items-start gap-3 p-4 has-[:checked]:border-ink">
-            <input type="radio" name="pm" checked={method === "eft"} onChange={() => setChoice("eft")} className="mt-1" />
-            <span><span className="block text-sm font-medium">EFT / bank transfer</span><span className="text-sm text-muted">You&apos;ll see our bank details after you place the order. Then upload your proof of payment (photo or document).</span></span>
-          </label>
-          <label className={`card flex items-start gap-3 p-4 has-[:checked]:border-ink ${linkOk ? "cursor-pointer" : "opacity-50"}`}>
-            <input type="radio" name="pm" disabled={!linkOk} checked={method === "payment_link"} onChange={() => setChoice("payment_link")} className="mt-1" />
-            <div className="min-w-0 flex-1">
-              <span className="block text-sm font-medium">Payment link</span>
-              <span className="text-sm text-muted">
-                {linkOk
-                  ? "Pay securely through the payment link. Available methods depend on the payment provider."
-                  : "Not available for the items in your bag. Choose EFT or order via WhatsApp."}
-              </span>
-              {linkOk && <PaymentMethodLogos />}
-            </div>
-          </label>
+          <div className="card p-4">
+            <span className="block text-sm font-medium">Secure payment link</span>
+            <span className="text-sm text-muted">
+              {linkOk
+                ? "Pay securely through the payment link. Available methods depend on the payment provider."
+                : "Online payment is temporarily unavailable for the items in your bag. Please contact us before placing your order."}
+            </span>
+            {linkOk && <PaymentMethodLogos />}
+          </div>
         </section>
       </div>
 
@@ -176,7 +169,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
           </span>
         </label>
         {error && <p role="alert" className="rounded-xl bg-soft-pink px-3 py-2 text-sm text-deep-pink">{error}</p>}
-        <button type="submit" disabled={busy || !accepted} className="btn btn-primary w-full">{busy ? "Placing order…" : `Confirm order · ${formatZAR(total)}`}</button>
+        <button type="submit" disabled={busy || !accepted || !linkOk} className="btn btn-primary w-full">{busy ? "Placing order…" : `Confirm order · ${formatZAR(total)}`}</button>
         <p className="text-center text-xs text-muted">Final totals are confirmed by our server.</p>
       </aside>
     </form>

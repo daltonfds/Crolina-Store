@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import AutoPay from "@/components/store/AutoPay";
-import ProofUpload from "@/components/store/ProofUpload";
 import { whatsappUrl } from "@/lib/config";
 import { formatZAR } from "@/lib/money";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -15,10 +14,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const sb = createServiceClient();
   const { data: order } = await sb.from("orders").select("*").eq("order_reference", reference).maybeSingle();
   if (!order) notFound();
-  const [{ data: items }, { data: bank }] = await Promise.all([
-    sb.from("order_items").select("product_name,unit_price_zar,quantity,line_total_zar").eq("order_id", order.id),
-    sb.from("bank_details").select("*").eq("is_active", true).limit(1).maybeSingle(),
-  ]);
+  const { data: items } = await sb.from("order_items").select("product_name,unit_price_zar,quantity,line_total_zar").eq("order_id", order.id);
   const autoPay = (await searchParams).pay === "1" && order.status === "pending_payment" && order.payment_method === "payment_link" && !!order.payment_link_url;
   const meta = statusMeta(order.status);
   const open = ["pending_payment", "proof_submitted"].includes(order.status);
@@ -37,47 +33,15 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
 
       {open && (
         <section className="card space-y-4 p-5">
-          {order.payment_method === "payment_link" && order.payment_link_url ? (
+          {order.payment_link_url ? (
             <>
               <h2 className="text-base font-medium">Pay online</h2>
               <a href={order.payment_link_url} target="_blank" rel="noreferrer" className="btn btn-primary w-full">Pay {formatZAR(order.total_zar)}</a>
-              <p className="text-xs text-muted">Use {reference} as your payment reference. After paying you can upload your proof below.</p>
+              <p className="text-xs text-muted">Use {reference} as your payment reference.</p>
             </>
           ) : (
-            <>
-              <h2 className="text-base font-medium">Pay by EFT</h2>
-              <div className="space-y-3">
-                <div className="rounded-xl border border-line p-4">
-                  <h3 className="mb-2 text-sm font-semibold">FNB</h3>
-                  <dl className="divide-y divide-line text-sm">
-                    {[
-                      ["Account name", "Noluthando khethani"],
-                      ["Account number", "63221498769"],
-                      ["Amount to pay", formatZAR(order.total_zar)],
-                      ["Payment reference", reference],
-                    ].map(([k, v]) => (
-                      <div key={k} className="flex justify-between gap-4 py-2"><dt className="text-muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>
-                    ))}
-                  </dl>
-                </div>
-                <div className="rounded-xl border border-line p-4">
-                  <h3 className="mb-2 text-sm font-semibold">Standard Bank</h3>
-                  <dl className="divide-y divide-line text-sm">
-                    {[
-                      ["Account number", "402152778"],
-                      ["Payment reference", "0722958915"],
-                      ["Amount to pay", formatZAR(order.total_zar)],
-                    ].map(([k, v]) => (
-                      <div key={k} className="flex justify-between gap-4 py-2"><dt className="text-muted">{k}</dt><dd className="text-right font-medium">{v}</dd></div>
-                    ))}
-                  </dl>
-                </div>
-                {bank?.eft_instructions && <p className="whitespace-pre-line text-sm text-muted">{bank.eft_instructions}</p>}
-              </div>
-            </>
+            <p className="text-sm text-muted">Payment link unavailable. Please contact us for assistance.</p>
           )}
-          <ProofUpload reference={reference} />
-          {order.status === "proof_submitted" && <p className="text-sm text-deep-lilac">Proof received. We&apos;ll confirm your payment shortly.</p>}
         </section>
       )}
 
