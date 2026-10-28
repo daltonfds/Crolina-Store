@@ -24,7 +24,7 @@ export default function AdminNav({ vertical = false }: { vertical?: boolean }) {
             <Link
               href={href}
               className={cn(
-                vertical ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm" : "flex w-20 flex-col items-center gap-0.5 py-2 text-[11px]",
+                vertical ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm" : "flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 text-[10px]",
                 active ? (vertical ? "bg-ink text-white" : "text-ink") : "text-muted hover:text-ink",
               )}
             >
