@@ -75,7 +75,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
-      await trackStoreEvent({
+      void trackStoreEvent({
         event_type: "order_placed",
         path: window.location.pathname,
         page_title: "Order placed",
