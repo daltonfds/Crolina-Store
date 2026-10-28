@@ -21,11 +21,15 @@ export type Product = {
   ingredients: string | null;
   how_to_use: string | null;
   warnings: string | null;
+  tagline: string | null;
+  benefits: string | null;
+  bundle3_pct: number | null;
+  bundle6_pct: number | null;
   created_at: string;
 };
 
 export const PRODUCT_COLUMNS =
-  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,brand,pack_size,flavour,ingredients,how_to_use,warnings,created_at";
+  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,brand,pack_size,flavour,ingredients,how_to_use,warnings,tagline,benefits,bundle3_pct,bundle6_pct,created_at";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toProduct(r: any): Product {
@@ -43,6 +47,10 @@ export function toProduct(r: any): Product {
     ingredients: r.ingredients ?? null,
     how_to_use: r.how_to_use ?? null,
     warnings: r.warnings ?? null,
+    tagline: r.tagline ?? null,
+    benefits: r.benefits ?? null,
+    bundle3_pct: r.bundle3_pct == null ? null : Number(r.bundle3_pct),
+    bundle6_pct: r.bundle6_pct == null ? null : Number(r.bundle6_pct),
   } as Product;
 }
 

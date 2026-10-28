@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { PROVINCES, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { sendOrderEmails } from "@/lib/email";
+import { lineTotal } from "@/lib/pricing";
 import { createServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -38,14 +39,14 @@ export async function POST(req: Request) {
   d.items.forEach((i) => qty.set(i.id, Math.min(10, (qty.get(i.id) ?? 0) + i.qty)));
   const ids = [...qty.keys()];
 
-  const { data: rows, error } = await sb.from("products").select("id,name,price_zar,status,stock_count,checkout_url").in("id", ids);
+  const { data: rows, error } = await sb.from("products").select("id,name,price_zar,status,stock_count,checkout_url,bundle3_pct,bundle6_pct").in("id", ids);
   if (error || !rows || rows.length !== ids.length) return fail("Some items in your bag are no longer available.", 409);
 
   let subtotal = 0;
   for (const r of rows) {
     const q = qty.get(r.id)!;
     if (r.status !== "Active" || r.stock_count < q) return fail(`${r.name} isn't available in the quantity you chose.`, 409);
-    subtotal += Number(r.price_zar) * q;
+    subtotal += lineTotal(Number(r.price_zar), q, { b3: r.bundle3_pct == null ? null : Number(r.bundle3_pct), b6: r.bundle6_pct == null ? null : Number(r.bundle6_pct) });
   }
   const itemCount = [...qty.values()].reduce((total, quantity) => total + quantity, 0);
   const shipping = shippingFor(subtotal, itemCount, d.delivery_method as DeliveryMethod);

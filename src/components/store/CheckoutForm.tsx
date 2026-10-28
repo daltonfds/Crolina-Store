@@ -7,6 +7,7 @@ import PaymentMethodLogos from "./PaymentMethodLogos";
 import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { cartCount, cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
+import { lineTotal } from "@/lib/pricing";
 import { trackStoreEvent } from "@/lib/analytics";
 
 export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailable: boolean }) {
@@ -156,7 +157,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
         <h2 className="text-base font-medium">Order summary</h2>
         <ul className="space-y-2 text-sm">
           {lines.map((l) => (
-            <li key={l.id} className="flex justify-between gap-3"><span className="line-clamp-1">{l.qty} × {l.name}</span><span>{formatZAR(l.price * l.qty)}</span></li>
+            <li key={l.id} className="flex justify-between gap-3"><span className="line-clamp-1">{l.qty} × {l.name}</span><span>{formatZAR(lineTotal(l.price, l.qty, { b3: l.b3, b6: l.b6 }))}</span></li>
           ))}
         </ul>
         <CartTotals lines={lines} deliveryMethod={deliveryMethod} />

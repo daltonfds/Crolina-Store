@@ -5,6 +5,7 @@ import ProductThumb from "./ProductThumb";
 import { STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { cartCount, cartSubtotal, useCart, type CartLine } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
+import { tierPct, unitPriceFor } from "@/lib/pricing";
 
 export function CartLines({ onNavigate }: { onNavigate?: () => void }) {
   const { lines, setQty, remove } = useCart();
@@ -20,7 +21,10 @@ export function CartLines({ onNavigate }: { onNavigate?: () => void }) {
           </Link>
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 text-sm">{l.name}</p>
-            <p className="text-sm font-medium">{formatZAR(l.price)}</p>
+            <p className="text-sm font-medium">
+              {formatZAR(unitPriceFor(l.price, l.qty, { b3: l.b3, b6: l.b6 }))}
+              {tierPct(l.qty, { b3: l.b3, b6: l.b6 }) > 0 && <span className="ml-2 text-xs font-normal text-muted">bundle price</span>}
+            </p>
             <div className="mt-2 flex items-center justify-between">
               <div className="inline-flex items-center rounded-full border border-line">
                 <button aria-label="Decrease quantity" className="flex h-9 w-9 items-center justify-center" onClick={() => setQty(l.id, l.qty - 1)}><Minus size={16} /></button>

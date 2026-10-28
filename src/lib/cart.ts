@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { lineTotal } from "@/lib/pricing";
 
 export type CartLine = {
-  id: string; slug: string; name: string; price: number; image: string | null; qty: number; max: number; link?: string | null;
+  id: string; slug: string; name: string; price: number; image: string | null; qty: number; max: number; link?: string | null; b3?: number | null; b6?: number | null;
 };
 
 type CartState = {
@@ -41,7 +42,7 @@ export const useCart = create<CartState>()(
   ),
 );
 
-export const cartSubtotal = (lines: CartLine[]) => lines.reduce((t, l) => t + l.price * l.qty, 0);
+export const cartSubtotal = (lines: CartLine[]) => lines.reduce((t, l) => t + lineTotal(l.price, l.qty, { b3: l.b3, b6: l.b6 }), 0);
 export const cartCount = (lines: CartLine[]) => lines.reduce((t, l) => t + l.qty, 0);
 
 type FavState = { ids: string[]; toggle: (id: string) => void };

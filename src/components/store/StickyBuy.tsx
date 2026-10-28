@@ -30,7 +30,7 @@ export default function StickyBuy({ product }: { product: Product }) {
         <button
           className="btn btn-primary !h-11 shrink-0"
           onClick={() =>
-            add({ id: product.id, slug: product.slug, name: product.name, price: product.price_zar, image: product.image_urls[0] ?? null, max: product.stock_count, link: product.checkout_url }, 1)
+            add({ id: product.id, slug: product.slug, name: product.name, price: product.price_zar, image: product.image_urls[0] ?? null, max: product.stock_count, link: product.checkout_url, b3: product.bundle3_pct, b6: product.bundle6_pct }, 1)
           }
         >
           Add to bag
