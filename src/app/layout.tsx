@@ -4,7 +4,6 @@ import "@fontsource/poppins/500.css";
 import "@fontsource/poppins/600.css";
 import "./globals.css";
 import { STORE } from "@/lib/config";
-import AnalyticsTracker from "@/components/store/AnalyticsTracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL(STORE.url),
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-ZA">
       <body>
-        <AnalyticsTracker />
         {children}
       </body>
     </html>
