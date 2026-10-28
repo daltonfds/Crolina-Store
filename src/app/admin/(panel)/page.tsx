@@ -156,7 +156,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       </section>
 
       <section>
-        <div className="mb-2"><h2 className="font-medium">Visitor journeys</h2><p className="text-sm text-muted">Pages and actions visitors took in their latest sessions.</p></div>
+        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2"><div><h2 className="font-medium">Visitor journeys</h2><p className="text-sm text-muted">Pages and actions visitors took in their latest sessions.</p></div><Link href="/admin/visitors" className="text-sm text-muted underline">Explore visual journeys →</Link></div>
         {recentJourneys.length === 0 ? <div className="card p-6 text-center text-sm text-muted">No visitor data yet. Apply the analytics migration in Supabase to start collecting visits.</div> : <div className="space-y-3">
           {recentJourneys.map(j => <div key={j.session} className="rounded-2xl border border-line bg-white p-4">
             <div className="flex flex-wrap justify-between gap-2"><p className="text-sm font-medium">Visitor {j.visitor.slice(0, 8)} · {j.steps.length} tracked steps</p><p className="text-xs text-muted">{j.last ? dateLabel(new Date(j.last), period) : ""}</p></div>
