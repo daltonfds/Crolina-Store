@@ -26,7 +26,7 @@ export default function ProductCard({ p }: { p: Product }) {
             <span className="absolute inset-x-0 bottom-0 bg-white/85 py-1.5 text-center text-xs font-medium">Sold out</span>
           )}
           {!sold && !singleItem && onSale && (
-            <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-deep-pink">Sale</span>
+            <span className="absolute left-2 top-2 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-deep-pink">Save {formatZAR(p.compare_at_price_zar! - p.price_zar)}</span>
           )}
         </div>
         <p className="mt-2 line-clamp-2 text-sm">{p.name}</p>
