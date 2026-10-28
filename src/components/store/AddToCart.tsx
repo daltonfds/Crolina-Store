@@ -67,7 +67,7 @@ export default function AddToCart({ product, supplement = false }: { product: Pr
           className={cn("btn btn-primary flex-1", supplement && "rounded-lg uppercase tracking-wide")}
           disabled={sold}
           onClick={() =>
-            add({ id: product.id, slug: product.slug, name: product.name, price: product.price_zar, image: product.image_urls[0] ?? null, max: product.stock_count, link: product.checkout_url, b3: product.bundle3_pct, b6: product.bundle6_pct }, qty)
+            add({ id: product.id, slug: product.slug, name: product.name, category: product.category, price: product.price_zar, image: product.image_urls[0] ?? null, max: product.stock_count, link: product.checkout_url, b3: product.bundle3_pct, b6: product.bundle6_pct }, qty)
           }
         >
           {sold ? "Sold out" : supplement ? <><ShoppingCart size={18} /> Add to cart</> : "Add to bag"}
