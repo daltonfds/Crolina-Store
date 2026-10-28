@@ -7,6 +7,7 @@ import PaymentMethodLogos from "./PaymentMethodLogos";
 import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { cartCount, cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
+import { trackStoreEvent } from "@/components/store/AnalyticsTracker";
 
 export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailable: boolean }) {
   const router = useRouter();
@@ -74,6 +75,13 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+      await trackStoreEvent({
+        event_type: "order_placed",
+        path: window.location.pathname,
+        page_title: "Order placed",
+        product_name: lines.map(line => line.name).join(", "),
+        metadata: { order_reference: data.reference, item_count: itemCount, order_total_zar: total },
+      });
       clear();
       router.push(`/order/${data.reference}${data.paymentUrl ? "?pay=1" : ""}`);
     } catch (err) {
