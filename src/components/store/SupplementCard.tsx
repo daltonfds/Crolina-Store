@@ -35,7 +35,7 @@ export default function SupplementCard({ p }: { p: Product }) {
       <button
         type="button"
         disabled={sold}
-        onClick={() => add({ id: p.id, slug: p.slug, name: p.name, price: p.price_zar, image: p.image_urls[0] ?? null, max: p.stock_count, link: p.checkout_url, b3: p.bundle3_pct, b6: p.bundle6_pct }, 1)}
+        onClick={() => add({ id: p.id, slug: p.slug, name: p.name, category: p.category, price: p.price_zar, image: p.image_urls[0] ?? null, max: p.stock_count, link: p.checkout_url, b3: p.bundle3_pct, b6: p.bundle6_pct }, 1)}
         className="btn btn-primary mt-3 h-11 w-full text-sm"
       >
         {sold ? "Sold out" : "Add to cart"}
