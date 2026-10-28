@@ -36,7 +36,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           {order.payment_link_url ? (
             <>
               <h2 className="text-base font-medium">Pay online</h2>
-              <a href={order.payment_link_url} target="_blank" rel="noreferrer" className="btn btn-primary w-full">Pay {formatZAR(order.total_zar)}</a>
+              <a href={order.payment_link_url} target="_blank" rel="noreferrer" className="btn btn-primary w-full">Pay now</a>
               <p className="text-xs text-muted">Use {reference} as your payment reference.</p>
             </>
           ) : (
