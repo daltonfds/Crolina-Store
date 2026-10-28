@@ -41,6 +41,12 @@ const productSchema = z.object({
   condition: z.enum(["New", "Used - Like New", "Used", "Single item"]),
   status: z.enum(["Active", "Draft", "Out of Stock"]),
   description: z.string().max(5000),
+  brand: z.string().max(80),
+  pack_size: z.string().max(60),
+  flavour: z.string().max(60),
+  ingredients: z.string().max(5000),
+  how_to_use: z.string().max(3000),
+  warnings: z.string().max(3000),
   checkout: z.string().trim().url("Enter a valid payment link").refine((u) => u.startsWith("https://"), "The payment link must start with https://").nullable(),
 });
 
@@ -50,6 +56,8 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
     name: fd.get("name"), slug: fd.get("slug"), category: fd.get("category"),
     price: num(fd.get("price")), compare: num(fd.get("compare")), stock: num(fd.get("stock")),
     condition: fd.get("condition"), status: fd.get("status"), description: String(fd.get("description") ?? ""),
+    brand: String(fd.get("brand") ?? ""), pack_size: String(fd.get("pack_size") ?? ""), flavour: String(fd.get("flavour") ?? ""),
+    ingredients: String(fd.get("ingredients") ?? ""), how_to_use: String(fd.get("how_to_use") ?? ""), warnings: String(fd.get("warnings") ?? ""),
     checkout: String(fd.get("checkout_url") ?? "").trim() || null,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
@@ -73,6 +81,8 @@ export async function saveProduct(_: FormState, fd: FormData): Promise<FormState
   const row = {
     name: v.name, slug: v.slug, category: v.category, price_zar: v.price, compare_at_price_zar: v.compare,
     stock_count: stock, condition: v.condition, status, description: v.description, specs,
+    brand: v.brand.trim() || null, pack_size: v.pack_size.trim() || null, flavour: v.flavour.trim() || null,
+    ingredients: v.ingredients.trim() || null, how_to_use: v.how_to_use.trim() || null, warnings: v.warnings.trim() || null,
     image_urls: images, featured: fd.get("featured") === "on",
     checkout_url: v.checkout,
   };

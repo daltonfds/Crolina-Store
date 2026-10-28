@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export const revalidate = 30;
 export const metadata = { title: "Shop" };
 
-type SP = { q?: string; category?: string; sort?: string; search?: string };
+type SP = { q?: string; category?: string; sort?: string; search?: string; sale?: string };
 
 const SORTS = [
   { v: "", l: "Newest" },
@@ -19,12 +19,12 @@ export default async function Shop({ searchParams }: { searchParams: Promise<SP>
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const [products, categories] = await Promise.all([
-    getProducts({ q, category: sp.category, sort: sp.sort }),
+    getProducts({ q, category: sp.category, sort: sp.sort, onSale: sp.sale === "1" }),
     getCategories(),
   ]);
   const href = (over: Partial<SP>) => {
     const p = new URLSearchParams();
-    const m = { q, category: sp.category, sort: sp.sort, ...over };
+    const m = { q, category: sp.category, sort: sp.sort, sale: sp.sale, ...over };
     Object.entries(m).forEach(([k, v]) => v && p.set(k, v));
     const s = p.toString();
     return s ? `/shop?${s}` : "/shop";

@@ -122,6 +122,19 @@ export default function ProductForm({ product, categories }: { product?: Product
         <textarea id="specs" name="specs" rows={3} defaultValue={specsText} placeholder={"Material: Cotton\nSize: M"} className="field" />
       </div>
 
+      <details className="rounded-2xl border border-line p-4" open={Boolean(product?.brand || product?.pack_size || product?.flavour || product?.ingredients || product?.how_to_use || product?.warnings)}>
+        <summary className="cursor-pointer text-sm font-medium">Supplement information (optional)</summary>
+        <div className="mt-4 space-y-4">
+          <div><label className="label" htmlFor="brand">Brand</label><input id="brand" name="brand" defaultValue={product?.brand ?? ""} className="field" /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="label" htmlFor="pack_size">Size</label><input id="pack_size" name="pack_size" defaultValue={product?.pack_size ?? ""} placeholder="60 capsules" className="field" /></div>
+            <div><label className="label" htmlFor="flavour">Flavour</label><input id="flavour" name="flavour" defaultValue={product?.flavour ?? ""} className="field" /></div>
+          </div>
+          <div><label className="label" htmlFor="ingredients">Ingredients &amp; supplement facts</label><textarea id="ingredients" name="ingredients" rows={4} defaultValue={product?.ingredients ?? ""} className="field" /></div>
+          <div><label className="label" htmlFor="how_to_use">How to use</label><textarea id="how_to_use" name="how_to_use" rows={3} defaultValue={product?.how_to_use ?? ""} className="field" /></div>
+          <div><label className="label" htmlFor="warnings">Warnings</label><textarea id="warnings" name="warnings" rows={3} defaultValue={product?.warnings ?? ""} placeholder="Leave empty to show the default warning." className="field" /></div>
+        </div>
+      </details>
       <details className="rounded-2xl border border-line p-4" open={Boolean(product?.checkout_url)}>
         <summary className="cursor-pointer text-sm font-medium">Payment link (optional)</summary>
         <div className="mt-3">

@@ -8,6 +8,7 @@ import { cartCount, useCart, useMounted } from "@/lib/cart";
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/supplements", label: "Supplements" },
   { href: "/favorites", label: "Favorites" },
   { href: "/account", label: "Account & order tracking" },
   { href: "/delivery", label: "Delivery information" },

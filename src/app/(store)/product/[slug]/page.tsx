@@ -7,7 +7,8 @@ import ProductCard from "@/components/store/ProductCard";
 import ProductGallery from "@/components/store/ProductGallery";
 import StickyBuy from "@/components/store/StickyBuy";
 import { getProduct, getProducts } from "@/lib/catalog";
-import { STORE, whatsappUrl } from "@/lib/config";
+import SupplementCard from "@/components/store/SupplementCard";
+import { STORE, isSupplement, whatsappUrl } from "@/lib/config";
 import { formatZAR } from "@/lib/money";
 import { isSoldOut } from "@/lib/types";
 import { TINTS } from "@/lib/utils";
@@ -53,6 +54,7 @@ export default async function ProductPage({ params }: Props) {
   const highlights = ([["Condition", p.condition], ...specs] as [string, string][]).slice(0, 4);
   const badge = sold ? undefined : p.stock_count === 1 ? "Single item" : onSale ? "Sale" : p.featured ? "Best seller" : undefined;
   const low = !sold && p.stock_count <= STORE.lowStock;
+  const supp = isSupplement(p.category);
 
   return (
     <div className="space-y-12">
@@ -65,7 +67,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
 
         <div className="min-w-0">
-          <Link href={`/shop?category=${encodeURIComponent(p.category)}`} className="inline-block max-w-full rounded-full bg-surface px-3 py-1 text-xs text-muted">{p.category}</Link>
+          <Link href={`/shop?category=${encodeURIComponent(p.category)}`} className="inline-block max-w-full rounded-full bg-surface px-3 py-1 text-xs text-muted">{supp && p.brand ? `${p.brand} · ` : ""}{p.category}</Link>
           <h1 className="mt-2 break-words text-xl font-medium leading-snug sm:text-2xl md:text-3xl">{p.name}</h1>
 
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -73,6 +75,12 @@ export default async function ProductPage({ params }: Props) {
             {onSale && <span className="text-sm font-medium text-red-600 line-through">{formatZAR(p.compare_at_price_zar!)}</span>}
             {onSale && <span className="rounded-full bg-soft-green px-3 py-1 text-xs font-medium text-deep-green">Save {formatZAR(saving)}</span>}
           </div>
+          {supp && (p.pack_size || p.flavour) && (
+            <div className="mt-4 space-y-3">
+              {p.pack_size && <div><p className="mb-1.5 text-xs text-muted">Size</p><span className="inline-block rounded-full border border-ink px-4 py-2 text-sm font-medium">{p.pack_size}</span></div>}
+              {p.flavour && <div><p className="mb-1.5 text-xs text-muted">Flavour</p><span className="inline-block rounded-full border border-ink px-4 py-2 text-sm font-medium">{p.flavour}</span></div>}
+            </div>
+          )}
           <p className={`mt-1 text-sm ${sold ? "text-danger" : low ? "text-deep-sand" : "text-deep-green"}`}>
             {sold ? "Sold out" : low ? `Only ${p.stock_count} left in stock` : "In stock"}
           </p>
@@ -92,6 +100,7 @@ export default async function ProductPage({ params }: Props) {
           )}
 
           <div id="buy-box" className="mt-6"><AddToCart product={p} /></div>
+          {supp && <p className="mt-3 text-center text-xs text-muted">Original product · Expiry date on pack · Delivery in {STORE.deliveryTime}</p>}
           {wa && (
             <a href={wa} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-muted underline">Have a question? Ask us on WhatsApp</a>
           )}
@@ -121,6 +130,13 @@ export default async function ProductPage({ params }: Props) {
                 </dl>
               </Accordion>
             )}
+            {supp && p.ingredients && <Accordion title="Supplement facts"><p className="whitespace-pre-line">{p.ingredients}</p></Accordion>}
+            {supp && p.how_to_use && <Accordion title="How to use"><p className="whitespace-pre-line">{p.how_to_use}</p></Accordion>}
+            {supp && (
+              <Accordion title="Warnings">
+                <p className="whitespace-pre-line">{p.warnings || "Adults 18+ only. Does not replace a varied diet. Keep out of reach of children. Ask a health professional if you are pregnant, breastfeeding or on medication."}</p>
+              </Accordion>
+            )}
             <Accordion title="Delivery information">
               <p>Express delivery takes 1–3 business days and costs R150. Standard delivery takes 1–5 business days and costs R100.</p>
               <p className="mt-2">Get free delivery when your order contains 5 or more eligible items OR your product subtotal is R2,500 or more after discounts.</p>
@@ -136,8 +152,8 @@ export default async function ProductPage({ params }: Props) {
 
       {related.length > 0 && (
         <section>
-          <h2 className="mb-3 text-base font-medium">You may also like</h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">{related.map((r) => <ProductCard key={r.id} p={r} />)}</div>
+          <h2 className="mb-3 text-base font-medium">{supp ? "Goes well with" : "You may also like"}</h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">{related.map((r) => (supp ? <SupplementCard key={r.id} p={r} /> : <ProductCard key={r.id} p={r} />))}</div>
         </section>
       )}
 
