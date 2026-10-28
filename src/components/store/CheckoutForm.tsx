@@ -7,7 +7,7 @@ import PaymentMethodLogos from "./PaymentMethodLogos";
 import { PROVINCES, STORE, qualifiesForFreeShipping, shippingFor, type DeliveryMethod } from "@/lib/config";
 import { cartCount, cartSubtotal, useCart, useMounted } from "@/lib/cart";
 import { formatZAR } from "@/lib/money";
-import { trackStoreEvent } from "@/components/store/AnalyticsTracker";
+import { trackStoreEvent } from "@/lib/analytics";
 
 export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailable: boolean }) {
   const router = useRouter();
