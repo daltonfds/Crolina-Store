@@ -161,7 +161,7 @@ export default function VisitorJourneysPage({ events }: { events: EventRow[] }) 
             </article>
           ))}
         </div>}
-      <p className="text-xs leading-5 text-muted">Privacy note: visitor IDs are pseudonymous, not names. Email and WhatsApp appear only when visitors voluntarily submit them. “Possible abandonment” is an estimate: checkout was started, no order event was seen, and activity stopped for at least 30 minutes.</p>
+      <p className="text-xs leading-5 text-muted">Privacy note: visitor IDs are pseudonymous, not names. Email and WhatsApp appear only when visitors voluntarily submit them. “Possible abandonment” is an estimate: a visitor added an item to the bag or started checkout, no order event was seen, and activity stopped for at least 30 minutes.</p>
     </div>
   );
 }
