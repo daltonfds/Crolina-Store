@@ -62,9 +62,10 @@ export default function VisitorJourneysPage({ events }: { events: EventRow[] }) 
       rows.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
       const hasOrder = rows.some(e => ["order_placed", "checkout_completed"].includes(e.event_type));
       const checkout = rows.some(e => e.event_type === "checkout_started");
+      const cartIntent = rows.some(e => ["add_to_cart", "checkout_started"].includes(e.event_type));
       const last = rows[rows.length - 1];
       const stale = now - new Date(last.created_at).getTime() > 30 * 60_000;
-      const status = hasOrder ? "converted" : checkout && stale ? "abandoned" : checkout ? "checkout" : "browsing";
+      const status = hasOrder ? "converted" : cartIntent && stale ? "abandoned" : checkout ? "checkout" : "browsing";
       return { session, rows, visitor: rows[0]?.visitor_id || "unknown", last, status, source: sourceLabel(rows) };
     }).sort((a, b) => new Date(b.last?.created_at || 0).getTime() - new Date(a.last?.created_at || 0).getTime());
   }, [events]);
@@ -105,7 +106,7 @@ export default function VisitorJourneysPage({ events }: { events: EventRow[] }) 
             ["Sessions", counts.sessions, "All tracked visits"],
             ["Browsing", counts.browsing, "Exploring products"],
             ["In checkout", counts.checkout, "Checkout not finished"],
-            ["Possible exits", counts.abandoned, "No order after 30 min"],
+            ["Possible exits", counts.abandoned, "Cart/checkout, no order after 30 min"],
             ["Orders placed", counts.converted, "Order submitted"],
           ].map(([label, value, note]) => <div key={String(label)} className="rounded-2xl border border-white/10 bg-white/[0.06] p-3"><p className="text-xs text-white/60">{label}</p><p className="mt-1 text-2xl font-semibold">{value}</p><p className="mt-1 text-[11px] text-white/50">{note}</p></div>)}
         </div>
