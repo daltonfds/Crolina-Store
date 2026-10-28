@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 import { lineTotal } from "@/lib/pricing";
 
 export type CartLine = {
-  id: string; slug: string; name: string; price: number; image: string | null; qty: number; max: number; link?: string | null; b3?: number | null; b6?: number | null;
+  id: string; slug: string; name: string; category?: string; price: number; image: string | null; qty: number; max: number; link?: string | null; b3?: number | null; b6?: number | null;
 };
 
 type CartState = {
