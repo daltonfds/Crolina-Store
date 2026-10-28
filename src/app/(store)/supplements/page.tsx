@@ -80,7 +80,7 @@ export default async function Supplements({ searchParams }: { searchParams: Prom
       <section className="rounded-3xl bg-ink px-6 py-7 text-white">
         <p className="text-xs uppercase tracking-[0.08em] text-white/70">Supplements</p>
         <h1 className="mt-2 text-2xl font-semibold leading-tight">Fuel your routine</h1>
-        <p className="mt-1.5 text-sm text-white/80">Original products, delivered nationwide in 1–5 business days.</p>
+        <p className="mt-1.5 text-sm text-white/80">Free nationwide delivery in up to 3 business days.</p>
         <a href="#products" className="btn mt-5 w-40 bg-white text-ink">Shop now</a>
       </section>
 
