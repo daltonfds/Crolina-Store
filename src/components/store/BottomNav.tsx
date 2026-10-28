@@ -1,34 +1,38 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Heart, House, LayoutGrid, User } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
-  { href: "/", label: "Home", Icon: House },
-  { href: "/shop", label: "Categories", Icon: LayoutGrid },
-  { href: "/favorites", label: "Favorites", Icon: Heart },
-  { href: "/account", label: "Account", Icon: User },
+  { href: "/", label: "Home", key: "home" },
+  { href: "/shop", label: "Shop", key: "shop" },
+  { href: "/categories", label: "Categories", key: "categories" },
+  { href: "/shop?sale=1", label: "On sale", key: "sale" },
+  { href: "/account", label: "Track", key: "track" },
 ];
 
-export default function BottomNav() {
+function Tabs() {
   const path = usePathname();
+  const sale = useSearchParams().get("sale") === "1";
   if (path.startsWith("/checkout") || path.startsWith("/order")) return null;
+  const activeKey = path === "/" ? "home" : path.startsWith("/categories") ? "categories"
+    : path.startsWith("/shop") ? (sale ? "sale" : "shop") : path.startsWith("/account") ? "track" : "";
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white md:hidden" aria-label="Main">
       <ul className="flex justify-around pb-[env(safe-area-inset-bottom)]">
-        {TABS.map(({ href, label, Icon }) => {
-          const active = href === "/" ? path === "/" : path.startsWith(href);
-          return (
-            <li key={href}>
-              <Link href={href} className={cn("flex w-20 flex-col items-center gap-0.5 py-2 text-[11px]", active ? "text-ink" : "text-muted")}>
-                <Icon size={22} strokeWidth={active ? 2 : 1.5} />
-                {label}
-              </Link>
-            </li>
-          );
-        })}
+        {TABS.map(({ href, label, key }) => (
+          <li key={key}>
+            <Link href={href} className={cn("flex h-14 w-[4.6rem] items-center justify-center text-[11px] uppercase tracking-wide", activeKey === key ? "font-semibold text-ink" : "text-muted")}>
+              {label}
+            </Link>
+          </li>
+        ))}
       </ul>
     </nav>
   );
+}
+
+export default function BottomNav() {
+  return <Suspense fallback={null}><Tabs /></Suspense>;
 }

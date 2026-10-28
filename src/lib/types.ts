@@ -15,11 +15,17 @@ export type Product = {
   status: ProductStatus;
   featured: boolean;
   checkout_url: string | null;
+  brand: string | null;
+  pack_size: string | null;
+  flavour: string | null;
+  ingredients: string | null;
+  how_to_use: string | null;
+  warnings: string | null;
   created_at: string;
 };
 
 export const PRODUCT_COLUMNS =
-  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,created_at";
+  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,brand,pack_size,flavour,ingredients,how_to_use,warnings,created_at";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toProduct(r: any): Product {
@@ -31,6 +37,12 @@ export function toProduct(r: any): Product {
     image_urls: Array.isArray(r.image_urls) ? r.image_urls : [],
     description: r.description ?? "",
     checkout_url: r.checkout_url ?? null,
+    brand: r.brand ?? null,
+    pack_size: r.pack_size ?? null,
+    flavour: r.flavour ?? null,
+    ingredients: r.ingredients ?? null,
+    how_to_use: r.how_to_use ?? null,
+    warnings: r.warnings ?? null,
   } as Product;
 }
 

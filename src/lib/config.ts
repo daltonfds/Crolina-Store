@@ -24,6 +24,10 @@ export const PROVINCES = [
   "Mpumalanga", "North West", "Northern Cape", "Western Cape",
 ] as const;
 
+/** Categories shown on /supplements and given the supplement layout on the product page. */
+export const SUPPLEMENT_CATEGORIES = ["Enlargement", "Libido Boosters", "Delay & Control", "Prostate Health"] as const;
+export const isSupplement = (category: string) => (SUPPLEMENT_CATEGORIES as readonly string[]).includes(category);
+
 export const CATEGORY_SUGGESTIONS = ["Women", "Men", "Accessories", "Home", "Beauty", "Essentials"];
 
 export type DeliveryMethod = "standard" | "express";

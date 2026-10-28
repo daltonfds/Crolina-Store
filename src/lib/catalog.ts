@@ -4,10 +4,11 @@ import { PRODUCT_COLUMNS, toProduct, type Product } from "@/lib/types";
 const VISIBLE = ["Active", "Out of Stock"];
 
 export async function getProducts(opts: {
-  q?: string; category?: string; sort?: string; featured?: boolean; limit?: number; excludeId?: string;
+  q?: string; category?: string; sort?: string; featured?: boolean; limit?: number; excludeId?: string; categories?: string[]; onSale?: boolean;
 } = {}): Promise<Product[]> {
   let q = createAnonClient().from("products").select(PRODUCT_COLUMNS).in("status", VISIBLE);
   if (opts.category) q = q.eq("category", opts.category);
+  if (opts.categories?.length) q = q.in("category", opts.categories);
   if (opts.featured) q = q.eq("featured", true);
   if (opts.excludeId) q = q.neq("id", opts.excludeId);
   if (opts.q) {
@@ -20,7 +21,8 @@ export async function getProducts(opts: {
   if (opts.limit) q = q.limit(opts.limit);
   const { data, error } = await q;
   if (error) { console.error("getProducts:", error.message); return []; }
-  return (data ?? []).map(toProduct);
+  const list = (data ?? []).map(toProduct);
+  return opts.onSale ? list.filter((p) => p.compare_at_price_zar != null && p.compare_at_price_zar > p.price_zar) : list;
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
