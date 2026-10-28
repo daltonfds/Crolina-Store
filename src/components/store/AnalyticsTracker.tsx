@@ -71,14 +71,12 @@ function AnalyticsTrackerInner() {
     const path = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
     const title = document.title.replace(/\s*\|\s*Crolina.*$/i, "").trim();
     const productPath = pathname.match(/^\/product\/([^/]+)/);
-    const orderPath = pathname.match(/^\/order\/[^/]+/);
     const base = { path, page_title: title, referrer: document.referrer || undefined };
     void trackStoreEvent({ event_type: "page_view", ...base });
     if (productPath) {
       void trackStoreEvent({ event_type: "product_view", ...base, product_name: title || decodeURIComponent(productPath[1]).replaceAll("-", " ") });
     }
     if (pathname === "/checkout") void trackStoreEvent({ event_type: "checkout_started", ...base });
-    if (orderPath) void trackStoreEvent({ event_type: "order_placed", ...base, metadata: { order_reference: pathname.split("/")[2] } });
   }, [pathname, searchParams]);
 
   useEffect(() => {
