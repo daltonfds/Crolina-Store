@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   if (!parsed.success) return fail("Please check your details and try again.");
   const d = parsed.data;
   const cookieHeader = req.headers.get("cookie") ?? "";
-  const affiliateCookie = cookieHeader.match(/(?:^|;\\s*)crolina_affiliate=([^;]+)/)?.[1];
+  const affiliateCookie = cookieHeader.match(/(?:^|;\s*)crolina_affiliate=([^;]+)/)?.[1];
   const affiliateCode = affiliateCookie ? decodeURIComponent(affiliateCookie).toLowerCase() : null;
   const sb = createServiceClient();
 
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
   await sb.from("orders").update({ terms_accepted_at: new Date().toISOString() }).eq("order_reference", data.order_reference);
 
-  const sessionCookie = cookieHeader.match(/(?:^|;\\s*)crolina_session_id=([^;]+)/)?.[1];
+  const sessionCookie = cookieHeader.match(/(?:^|;\s*)crolina_session_id=([^;]+)/)?.[1];
   if (sessionCookie) {
     const sessionId = decodeURIComponent(sessionCookie);
     const { data: orderRow } = await sb.from("orders").select("id").eq("order_reference", data.order_reference).maybeSingle();
