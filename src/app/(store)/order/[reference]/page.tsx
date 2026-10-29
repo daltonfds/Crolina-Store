@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import AutoPay from "@/components/store/AutoPay";
 import { whatsappUrl } from "@/lib/config";
@@ -43,6 +44,10 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <p className="text-sm text-muted">Payment link unavailable. Please contact us for assistance.</p>
           )}
         </section>
+      )}
+
+      {["paid", "processing", "shipped", "completed"].includes(order.status) && (
+        <p className="text-sm text-muted">Problem with this order? <Link href={`/returns/request?order=${reference}`} className="underline">Request a return, exchange or refund</Link>.</p>
       )}
 
       <section className="card p-5">

@@ -11,6 +11,12 @@ export default function ReturnsPage() {
         <p className="text-muted">We handle cancellations, returns, defective goods, and incorrect orders in line with applicable South African consumer protection law.</p>
       </header>
 
+      <section className="card space-y-2 p-5">
+        <h2 className="text-base font-medium">Need to return, exchange or get a refund?</h2>
+        <p className="text-sm text-muted">Submit a request online. Our team reviews every request and answers by email. The whole process usually takes around 15 days. Please do not send anything back before we approve your request.</p>
+        <Link href="/returns/request" className="btn btn-primary w-full">Start a request</Link>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-xl font-medium">1. Report a problem</h2>
         <p className="text-sm leading-6 text-ink/80">Contact us as soon as reasonably possible if an order is damaged, defective, incomplete, not delivered, or different from what you ordered. Include your order reference and, where helpful, photos of the item and packaging. Any request to contact us promptly is for efficient assistance and does not shorten statutory rights or time limits.</p>
