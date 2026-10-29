@@ -33,6 +33,9 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return fail("Please check your details and try again.");
   const d = parsed.data;
+  const cookieHeader = req.headers.get("cookie") ?? "";
+  const affiliateCookie = cookieHeader.match(/(?:^|;\\s*)crolina_affiliate=([^;]+)/)?.[1];
+  const affiliateCode = affiliateCookie ? decodeURIComponent(affiliateCookie).toLowerCase() : null;
   const sb = createServiceClient();
 
   const qty = new Map<string, number>();
@@ -86,6 +89,18 @@ export async function POST(req: Request) {
   if (rpcError || !data) return fail(`We couldn't place your order. ${rpcError?.message ?? ""}`.trim(), 409);
 
   await sb.from("orders").update({ terms_accepted_at: new Date().toISOString() }).eq("order_reference", data.order_reference);
+
+  // Attribute eligible referrals once per order; commission remains pending until payment/order verification.
+  if (affiliateCode && /^[a-z0-9_-]{3,40}$/.test(affiliateCode)) {
+    const [{ data: affiliate }, { data: order }] = await Promise.all([
+      sb.from("store_affiliates").select("id,commission_percent").eq("code", affiliateCode).eq("status", "active").maybeSingle(),
+      sb.from("orders").select("id,total_zar").eq("order_reference", data.order_reference).maybeSingle(),
+    ]);
+    if (affiliate && order) {
+      const percent = Number(affiliate.commission_percent);
+      await sb.from("store_affiliate_commissions").upsert({ affiliate_id: affiliate.id, order_id: order.id, order_total_zar: Number(order.total_zar), commission_percent: percent, commission_zar: Math.round(Number(order.total_zar) * percent) / 100, status: "pending" }, { onConflict: "order_id", ignoreDuplicates: true });
+    }
+  }
 
   await sendOrderEmails({
     reference: data.order_reference, name: d.customer.name, email: d.customer.email,
