@@ -23,7 +23,7 @@ export default function CartPage() {
       <div><h1 className="mb-2 text-2xl font-medium">Your bag</h1><CartLines /></div>
       <aside className="card h-fit space-y-4 p-5">
         <CartTotals lines={lines} />
-        <Link href="/checkout" className="btn btn-primary w-full">Checkout</Link>
+        <Link href="/checkout" className="btn btn-primary w-full">Pay Now</Link>
         <WhatsAppCartButton />
         <Link href="/shop" className="block text-center text-sm text-muted underline">Continue shopping</Link>
       </aside>
