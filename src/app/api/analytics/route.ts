@@ -12,6 +12,11 @@ const schema = z.object({
   product_id: z.string().max(100).optional(),
   product_name: z.string().trim().max(200).optional(),
   referrer: z.string().trim().max(500).optional(),
+  duration_seconds: z.number().int().min(0).max(86400).optional(),
+  contact_email: z.string().trim().email().max(200).optional(),
+  contact_phone: z.string().trim().max(30).optional(),
+  consent_marketing: z.boolean().optional(),
+  affiliate_code: z.string().trim().max(40).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
