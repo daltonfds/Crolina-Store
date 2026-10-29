@@ -90,6 +90,13 @@ export async function POST(req: Request) {
 
   await sb.from("orders").update({ terms_accepted_at: new Date().toISOString() }).eq("order_reference", data.order_reference);
 
+  const sessionCookie = cookieHeader.match(/(?:^|;\\s*)crolina_session_id=([^;]+)/)?.[1];
+  if (sessionCookie) {
+    const sessionId = decodeURIComponent(sessionCookie);
+    const { data: orderRow } = await sb.from("orders").select("id").eq("order_reference", data.order_reference).maybeSingle();
+    await sb.from("store_abandoned_checkouts").update({ status: "recovered", recovered_order_id: orderRow?.id ?? null, updated_at: new Date().toISOString() }).eq("session_id", sessionId).eq("status", "open");
+  }
+
   // Attribute eligible referrals once per order; commission remains pending until payment/order verification.
   if (affiliateCode && /^[a-z0-9_-]{3,40}$/.test(affiliateCode)) {
     const [{ data: affiliate }, { data: order }] = await Promise.all([
