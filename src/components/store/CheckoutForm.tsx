@@ -181,7 +181,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
           </span>
         </label>
         {error && <p role="alert" className="rounded-xl bg-soft-pink px-3 py-2 text-sm text-deep-pink">{error}</p>}
-        <button type="submit" disabled={busy || !accepted || !linkOk} className="btn btn-primary w-full">{busy ? "Placing order…" : `Confirm order · ${formatZAR(total)}`}</button>
+        <button type="submit" disabled={busy || !accepted || !linkOk} className="btn btn-primary w-full">{busy ? "Processing…" : "Pay Now"}</button>
         <p className="text-center text-xs text-muted">Final totals are confirmed by our server.</p>
       </aside>
     </form>
