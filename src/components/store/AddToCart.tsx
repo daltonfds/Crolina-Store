@@ -10,7 +10,7 @@ import type { Product } from "@/lib/types";
 import { isSoldOut } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export default function AddToCart({ product, supplement = false }: { product: Product; supplement?: boolean }) {
+export default function AddToCart({ product, supplement = false, kids = false }: { product: Product; supplement?: boolean; kids?: boolean }) {
   const add = useCart((s) => s.add);
   const max = Math.max(1, Math.min(product.stock_count, 10));
   const [qty, setQty] = useState(1);
@@ -64,13 +64,13 @@ export default function AddToCart({ product, supplement = false }: { product: Pr
           <button aria-label="Increase quantity" disabled={sold || qty >= max} className="flex h-12 w-11 items-center justify-center disabled:opacity-30" onClick={() => setQty((q) => Math.min(max, q + 1))}><Plus size={18} /></button>
         </div>
         <button
-          className={cn("btn btn-primary flex-1", supplement && "rounded-lg uppercase tracking-wide")}
+          className={cn(kids ? "btn btn-kids flex-1 uppercase tracking-wide" : "btn btn-primary flex-1", supplement && "rounded-lg uppercase tracking-wide")}
           disabled={sold}
           onClick={() =>
             add({ id: product.id, slug: product.slug, name: product.name, category: product.category, price: product.price_zar, image: product.image_urls[0] ?? null, max: product.stock_count, link: product.checkout_url, b3: product.bundle3_pct, b6: product.bundle6_pct }, qty)
           }
         >
-          {sold ? "Sold out" : supplement ? <><ShoppingCart size={18} /> Add to cart</> : "Add to bag"}
+          {sold ? "Sold out" : supplement || kids ? <><ShoppingCart size={18} /> Add to cart</> : "Add to bag"}
         </button>
       </div>
       {wa && !sold && (
