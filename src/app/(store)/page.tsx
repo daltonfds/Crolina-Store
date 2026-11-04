@@ -37,6 +37,15 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+      <Link href="/kids" className="relative block overflow-hidden rounded-3xl bg-[#1170d8] px-5 py-5 text-white">
+        <span className="absolute -right-4 -top-6 h-20 w-20 rounded-full bg-[#ffd93b]" aria-hidden="true" />
+        <span className="absolute bottom-[-12px] right-24 h-9 w-9 rounded-full bg-[#ff8fb8]" aria-hidden="true" />
+        <span className="relative block text-[11px] font-semibold uppercase tracking-[0.08em]">New</span>
+        <span className="font-kids relative block text-3xl font-semibold leading-tight">Crolina Kids</span>
+        <span className="relative mt-1 block max-w-[13rem] text-sm">Everyday essentials for little ones.</span>
+        <span className="btn btn-kids-yellow relative mt-3 h-10 px-5 text-sm">Shop Kids</span>
+      </Link>
     </div>
   );
 }
