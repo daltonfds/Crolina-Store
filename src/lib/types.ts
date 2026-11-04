@@ -25,11 +25,18 @@ export type Product = {
   benefits: string | null;
   bundle3_pct: number | null;
   bundle6_pct: number | null;
+  is_kids: boolean;
+  age_min: number | null;
+  age_max: number | null;
+  material: string | null;
+  safety_info: string | null;
+  box_contents: string | null;
+  care_info: string | null;
   created_at: string;
 };
 
 export const PRODUCT_COLUMNS =
-  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,brand,pack_size,flavour,ingredients,how_to_use,warnings,tagline,benefits,bundle3_pct,bundle6_pct,created_at";
+  "id,name,slug,category,price_zar,compare_at_price_zar,condition,description,specs,image_urls,stock_count,status,featured,checkout_url,brand,pack_size,flavour,ingredients,how_to_use,warnings,tagline,benefits,bundle3_pct,bundle6_pct,is_kids,age_min,age_max,material,safety_info,box_contents,care_info,created_at";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toProduct(r: any): Product {
@@ -51,6 +58,13 @@ export function toProduct(r: any): Product {
     benefits: r.benefits ?? null,
     bundle3_pct: r.bundle3_pct == null ? null : Number(r.bundle3_pct),
     bundle6_pct: r.bundle6_pct == null ? null : Number(r.bundle6_pct),
+    is_kids: Boolean(r.is_kids),
+    age_min: r.age_min == null ? null : Number(r.age_min),
+    age_max: r.age_max == null ? null : Number(r.age_max),
+    material: r.material ?? null,
+    safety_info: r.safety_info ?? null,
+    box_contents: r.box_contents ?? null,
+    care_info: r.care_info ?? null,
   } as Product;
 }
 
