@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/500.css";
 import "@fontsource/poppins/600.css";
+import "@fontsource/fredoka/500.css";
+import "@fontsource/fredoka/600.css";
 import "./globals.css";
 import { STORE } from "@/lib/config";
 import VisitorTracker from "@/components/analytics/VisitorTracker";
