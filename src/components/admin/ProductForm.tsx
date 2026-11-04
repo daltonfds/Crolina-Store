@@ -122,6 +122,21 @@ export default function ProductForm({ product, categories }: { product?: Product
         <textarea id="specs" name="specs" rows={3} defaultValue={specsText} placeholder={"Material: Cotton\nSize: M"} className="field" />
       </div>
 
+      <details className="rounded-2xl border border-line p-4" open={Boolean(product?.is_kids)}>
+        <summary className="cursor-pointer text-sm font-medium">Crolina Kids (optional)</summary>
+        <div className="mt-4 space-y-4">
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="is_kids" defaultChecked={product?.is_kids ?? false} className="h-4 w-4 accent-black" /> Show this product in Crolina Kids (it is then hidden from the main shop)</label>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="label" htmlFor="age_min">Minimum age (years)</label><input id="age_min" name="age_min" type="number" min="0" max="17" step="1" defaultValue={product?.age_min ?? ""} className="field" /></div>
+            <div><label className="label" htmlFor="age_max">Maximum age (years)</label><input id="age_max" name="age_max" type="number" min="0" max="17" step="1" defaultValue={product?.age_max ?? ""} className="field" /></div>
+          </div>
+          <div><label className="label" htmlFor="material">Material</label><input id="material" name="material" defaultValue={product?.material ?? ""} className="field" /></div>
+          <div><label className="label" htmlFor="safety_info">Safety information</label><textarea id="safety_info" name="safety_info" rows={3} defaultValue={product?.safety_info ?? ""} placeholder="Copy the warnings exactly as printed on the pack, e.g. small parts." className="field h-auto py-3" /></div>
+          <div><label className="label" htmlFor="box_contents">What is in the box</label><textarea id="box_contents" name="box_contents" rows={2} defaultValue={product?.box_contents ?? ""} className="field h-auto py-3" /></div>
+          <div><label className="label" htmlFor="care_info">Care &amp; materials</label><textarea id="care_info" name="care_info" rows={2} defaultValue={product?.care_info ?? ""} className="field h-auto py-3" /></div>
+          <p className="text-xs text-muted">For clothing, put the size in the "Size" field of Supplement information.</p>
+        </div>
+      </details>
       <details className="rounded-2xl border border-line p-4" open={Boolean(product?.tagline || product?.benefits || product?.bundle3_pct != null || product?.bundle6_pct != null || product?.brand || product?.pack_size || product?.flavour || product?.ingredients || product?.how_to_use || product?.warnings)}>
         <summary className="cursor-pointer text-sm font-medium">Supplement information (optional)</summary>
         <div className="mt-4 space-y-4">
