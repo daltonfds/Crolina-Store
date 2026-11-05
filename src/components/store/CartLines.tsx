@@ -44,8 +44,8 @@ export function CartTotals({ lines, deliveryMethod = "standard" }: { lines: Cart
   const subtotal = cartSubtotal(lines);
   const itemCount = cartCount(lines);
   const supplementsOnly = lines.length > 0 && lines.every((line) => isSupplement(line.category ?? ""));
-  const freeDelivery = supplementsOnly || qualifiesForFreeShipping(subtotal, itemCount);
-  const shipping = supplementsOnly ? 0 : shippingFor(subtotal, itemCount, deliveryMethod);
+  const freeDelivery = true;
+  const shipping = 0;
   const away = Math.max(0, STORE.freeShippingOver - subtotal);
   const itemsAway = Math.max(0, STORE.freeShippingMinItems - itemCount);
   return (
@@ -54,7 +54,7 @@ export function CartTotals({ lines, deliveryMethod = "standard" }: { lines: Cart
         <div className="mb-3 rounded-xl bg-[#f0f7ff] p-3">
           <p className="text-xs text-[#1e4f9c]">
             {itemsAway > 0
-              ? `Add ${itemsAway} more ${itemsAway === 1 ? "item" : "items"} OR spend ${formatZAR(away)} more to unlock free delivery.`
+              ? ``
               : `Your order qualifies for free delivery.`}
           </p>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white">
@@ -65,7 +65,7 @@ export function CartTotals({ lines, deliveryMethod = "standard" }: { lines: Cart
       <div className="flex justify-between"><span className="text-muted">Subtotal (after discounts)</span><span>{formatZAR(subtotal)}</span></div>
       <div className="flex justify-between"><span className="text-muted">Delivery · {deliveryMethod === "express" ? "Express" : "Standard"}</span><span>{shipping === 0 ? "Free" : formatZAR(shipping)}</span></div>
       <div className="flex justify-between border-t border-line pt-2 text-base font-medium"><span>Total</span><span>{formatZAR(subtotal + shipping)}</span></div>
-      <p className="text-xs text-muted">{supplementsOnly ? "Supplements include free delivery in up to 3 business days." : "Free delivery applies to 5 or more eligible items OR a product subtotal of R2,500 or more after discounts."}</p>
+      <p className="text-xs text-muted">{supplementsOnly ? "Supplements include free delivery in up to 3 business days." : "Free delivery is included with every Crolina product."}</p>
       <p className="text-xs text-muted">Prices include VAT where applicable.</p>
     </div>
   );
