@@ -3,12 +3,12 @@ export const STORE = {
   tagline: "Essential goods | South Africa",
   url: process.env.NEXT_PUBLIC_STORE_URL || "https://www.crolina.shop",
   whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
-  standardShipping: 100,
-  expressShipping: 150,
+  standardShipping: 0,
+  expressShipping: 0,
   /** Legacy fallback for components that still display a single delivery rate. */
-  shippingFlat: 100,
-  freeShippingOver: 2500,
-  freeShippingMinItems: 5,
+  shippingFlat: 0,
+  freeShippingOver: 0,
+  freeShippingMinItems: 0,
   lowStock: 3,
   deliveryTime: "1–5 business days",
   email: "support@crolina.shop",
@@ -33,7 +33,7 @@ export const CATEGORY_SUGGESTIONS = ["Women", "Men", "Accessories", "Home", "Bea
 export type DeliveryMethod = "standard" | "express";
 
 export function qualifiesForFreeShipping(subtotalAfterDiscounts: number, itemCount: number) {
-  return subtotalAfterDiscounts >= STORE.freeShippingOver || itemCount >= STORE.freeShippingMinItems;
+  return true;
 }
 
 export function shippingFor(
@@ -41,9 +41,7 @@ export function shippingFor(
   itemCount = 0,
   method: DeliveryMethod = "standard",
 ) {
-  if (subtotalAfterDiscounts <= 0) return 0;
-  if (qualifiesForFreeShipping(subtotalAfterDiscounts, itemCount)) return 0;
-  return method === "express" ? STORE.expressShipping : STORE.standardShipping;
+  return 0;
 }
 
 export function whatsappUrl(text: string) {
