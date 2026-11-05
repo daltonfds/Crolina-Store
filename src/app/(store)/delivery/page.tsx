@@ -10,30 +10,25 @@ export default function DeliveryPage() {
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Crolina · South Africa</p>
         <h1 className="text-3xl font-medium">Delivery information</h1>
-        <p className="text-muted">Choose the delivery window that suits you. Your delivery charge and order total are shown before you place your order.</p>
+        <p className="text-muted">Enjoy free delivery on every Crolina product throughout South Africa.</p>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-line p-5">
           <p className="text-sm font-medium text-muted">Express · 1–3 business days</p>
-          <p className="mt-1 text-2xl font-medium">{formatZAR(STORE.expressShipping)}</p>
+          <p className="mt-1 text-2xl font-medium">FREE</p>
           <p className="mt-2 text-sm text-muted">Estimated delivery after payment confirmation.</p>
         </div>
         <div className="rounded-2xl border border-line p-5">
           <p className="text-sm font-medium text-muted">Standard · 1–5 business days</p>
-          <p className="mt-1 text-2xl font-medium">{formatZAR(STORE.standardShipping)}</p>
+          <p className="mt-1 text-2xl font-medium">FREE</p>
           <p className="mt-2 text-sm text-muted">Estimated delivery after payment confirmation.</p>
         </div>
       </section>
 
       <section className="rounded-2xl bg-[#f0f7ff] p-5">
-        <h2 className="text-lg font-medium text-[#1e4f9c]">Get free delivery</h2>
-        <p className="mt-2 text-sm leading-6 text-[#1e4f9c]">Delivery is free when either condition is met:</p>
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-[#1e4f9c]">
-          <li>Your order contains 5 or more eligible items; OR</li>
-          <li>Your eligible product subtotal is R2,500 or more after discounts.</li>
-        </ul>
-        <p className="mt-2 text-sm leading-6 text-[#1e4f9c]">Only one condition needs to be met. The free-delivery qualification is calculated using the final eligible product prices after discounts and before delivery charges.</p>
+        <h2 className="text-lg font-medium text-[#1e4f9c]">Free delivery on every order</h2>
+        <p className="mt-2 text-sm leading-6 text-[#1e4f9c]">Every product on Crolina includes free delivery throughout South Africa. No minimum spend and no minimum item quantity.</p>
       </section>
 
       <section className="space-y-3">
