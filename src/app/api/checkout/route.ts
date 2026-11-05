@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   }
   const itemCount = [...qty.values()].reduce((total, quantity) => total + quantity, 0);
   const supplementsOnly = rows.length > 0 && rows.every((row) => isSupplement(row.category));
-  const shipping = supplementsOnly ? 0 : shippingFor(subtotal, itemCount, d.delivery_method as DeliveryMethod);
+  const shipping = 0;
 
   let linkUrl: string | null = null;
   if (d.payment_method === "payment_link") {
