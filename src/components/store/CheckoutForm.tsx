@@ -49,8 +49,8 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
   const subtotal = cartSubtotal(lines);
   const itemCount = cartCount(lines);
   const supplementsOnly = lines.length > 0 && lines.every((line) => isSupplement(line.category ?? ""));
-  const freeDelivery = supplementsOnly || qualifiesForFreeShipping(subtotal, itemCount);
-  const deliveryFee = supplementsOnly ? 0 : shippingFor(subtotal, itemCount, deliveryMethod);
+  const freeDelivery = true;
+  const deliveryFee = 0;
   const total = subtotal + deliveryFee;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -145,7 +145,7 @@ export default function CheckoutForm({ storeLinkAvailable }: { storeLinkAvailabl
                 <input type="radio" name="delivery_method" checked={deliveryMethod === "express"} onChange={() => setDeliveryMethod("express")} className="mt-1" />
                 <span className="flex-1"><span className="block text-sm font-medium">Express</span><span className="block text-sm text-muted">1–3 business days</span><span className="text-sm text-muted">{freeDelivery ? "FREE" : formatZAR(STORE.expressShipping)}</span></span>
               </label>
-              <p className="text-xs text-muted">Free delivery applies when your order contains 5 or more eligible items OR the product subtotal after discounts is R2,500 or more.</p>
+              <p className="text-xs text-muted">Free delivery is included with every Crolina order.</p>
             </>
           )}
         </section>
