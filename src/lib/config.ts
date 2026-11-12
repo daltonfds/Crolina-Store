@@ -2,7 +2,7 @@ export const STORE = {
   name: "Crolina",
   tagline: "Essential goods | South Africa",
   url: process.env.NEXT_PUBLIC_STORE_URL || "https://www.crolina.shop",
-  whatsapp: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
+  whatsapp: "27722958915",
   standardShipping: 0,
   expressShipping: 0,
   /** Legacy fallback for components that still display a single delivery rate. */
