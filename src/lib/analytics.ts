@@ -1,7 +1,7 @@
 "use client";
 
 export type StoreAnalyticsEvent = {
-  event_type: "page_view" | "product_view" | "add_to_cart" | "checkout_started" | "checkout_completed" | "order_placed" | "cookie_accepted" | "exit_prompt_opened";
+  event_type: "page_view" | "product_view" | "add_to_cart" | "checkout_started" | "checkout_completed" | "order_placed" | "cookie_accepted" | "exit_prompt_opened" | "relief_started" | "relief_plan_shown" | "relief_upsell" | "relief_whatsapp_click";
   path?: string;
   page_title?: string;
   product_id?: string;
