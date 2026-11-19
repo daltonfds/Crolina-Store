@@ -10,6 +10,55 @@ const PRICES = { relief: 380, reliefOriginal: 500, complete: 499 } as const;
 
 const R = (n: number) => `R${n}`;
 
+const GREEN = "#178f47";
+const AMBER = "#b45309";
+
+const BENEFITS = [
+  "Reduces swelling and bruising",
+  "Relieves muscular aches, sprains and strains",
+  "Relieves muscle tightness and spasms after exercise",
+  "Soothes muscle pain and stiffness",
+  "Absorbs fast",
+];
+
+function Tick() {
+  return (
+    <span aria-hidden className="mt-0.5 grid h-5 w-5 flex-none place-items-center rounded-full" style={{ background: GREEN }}>
+      <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2.5 6.2l2.4 2.4 4.6-5.2" />
+      </svg>
+    </span>
+  );
+}
+
+function BenefitsCard() {
+  return (
+    <div className="w-full max-w-[84%] rounded-2xl rounded-bl-sm border border-line bg-white p-4">
+      <p className="mb-2.5 text-base font-semibold">It helps:</p>
+      <ul className="space-y-2.5">
+        {BENEFITS.map((b) => (
+          <li key={b} className="flex items-start gap-2.5 text-[15px] leading-snug">
+            <Tick />
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function renderHighlightedText(text: string) {
+  return text.split(/(\[g\].*?\[\/g\]|\[w\].*?\[\/w\])/s).map((part, index) => {
+    if (part.startsWith("[g]") && part.endsWith("[/g]")) {
+      return <span key={index} style={{ color: GREEN }} className="font-semibold">{part.slice(3, -4)}</span>;
+    }
+    if (part.startsWith("[w]") && part.endsWith("[/w]")) {
+      return <span key={index} style={{ color: AMBER }} className="font-semibold">{part.slice(3, -4)}</span>;
+    }
+    return part;
+  });
+}
+
 // Colors of the approved chat design (teal + navy). Scoped to this page only: they override the
 // store tokens (ink, line, muted, surface) for everything inside the chat, so the rest of the store is untouched.
 const RELIEF_THEME = {
@@ -20,7 +69,7 @@ const RELIEF_THEME = {
   color: "#0d1b2a",
 } as CSSProperties;
 
-type Msg = { id: number; from: "bot" | "me"; kind: "text" | "typing" | "image" | "card"; text?: string; complete?: boolean };
+type Msg = { id: number; from: "bot" | "me"; kind: "text" | "typing" | "image" | "card" | "benefits"; text?: string; complete?: boolean };
 type Panel =
   | { type: "none" }
   | { type: "choices"; options: string[]; pick: (v: string) => void }
@@ -79,7 +128,7 @@ function PlanCard({ complete }: { complete: boolean }) {
         <span className="text-4xl font-semibold tracking-tight">{R(complete ? PRICES.complete : PRICES.relief)}</span>
         {!complete && <s className="text-muted">{R(PRICES.reliefOriginal)}</s>}
       </div>
-      <p className="mb-2 text-[13px] text-muted">Free delivery · Pay by EFT or card · Cash on delivery unavailable</p>
+      <p className="mb-2 text-[13px] text-muted"><span style={{ color: GREEN }} className="font-semibold">Free delivery</span> · Pay by EFT or card · <span style={{ color: AMBER }} className="font-semibold">Cash on delivery unavailable</span></p>
       <div className="border-t border-line py-2.5 text-[15px]">
         <strong className="block font-semibold">1. Relief where it hurts</strong>
         <span className="text-muted">Apply the gel straight onto the area. It soothes muscle pain and stiffness, helps reduce the look of bruises and absorbs fast.</span>
@@ -132,7 +181,7 @@ export default function ReliefChat() {
     [push, drop, sleep],
   );
   const show = useCallback(
-    async (kind: "image" | "card", token: number, delay: number, hold: number, complete = false) => {
+    async (kind: "image" | "card" | "benefits", token: number, delay: number, hold: number, complete = false) => {
       const t = push({ from: "bot", kind: "typing" });
       await sleep(delay, token);
       drop(t);
@@ -215,8 +264,7 @@ export default function ReliefChat() {
       await say(s2, token, readTime(s2));
       await say("The heart of your plan is Go-Pain Arnica Gel, 100g.", token, 2500);
       await show("image", token, 900, 3500);
-      const p1 = "It's an arnica gel made for muscular aches, sprains and strains, and for the tightness and spasms that come with exercise. It also helps reduce swelling and bruising.";
-      await say(p1, token, readTime(p1));
+      await show("benefits", token, 900, 5000);
       const p2 = "You rub it straight onto the spot that hurts and it absorbs fast, so you can get on with your day.";
       await say(p2, token, readTime(p2));
       trackRelief(
@@ -226,14 +274,14 @@ export default function ReliefChat() {
       );
       pixel("Lead");
       await show("card", token, 1100, 5000, false);
-      const p3 = `That is ${R(PRICES.reliefOriginal - PRICES.relief)} off the usual price of ${R(PRICES.reliefOriginal)}.`;
+      const p3 = `That is [g]${R(PRICES.reliefOriginal - PRICES.relief)} off[/g] the usual price of ${R(PRICES.reliefOriginal)}.`;
       await say(p3, token, readTime(p3));
 
       const u1 = isChronic(a)
         ? "Because yours has been with you a while, there is one more option to consider. The Gel + Tablets combo is for people who want support from the outside and the inside."
         : "If you'd also like support from the inside, there is the Gel + Tablets combo.";
       await say(u1, token, readTime(u1));
-      const u2 = `It's ${R(PRICES.complete)} in total, just ${R(PRICES.complete - PRICES.relief)} more than the gel alone. Would you like to add the tablets?`;
+      const u2 = `It's ${R(PRICES.complete)} in total, just [g]${R(PRICES.complete - PRICES.relief)} more[/g] than the gel alone. Would you like to add the tablets?`;
       await say(u2, token, readTime(u2));
       const pick = await choose([`Yes, add the tablets (${R(PRICES.complete)} total)`, `No, just the gel (${R(PRICES.relief)})`], token);
       const complete = pick.startsWith("Yes");
@@ -241,11 +289,11 @@ export default function ReliefChat() {
       if (complete) await say(`Good choice. Your plan is now the Gel + Tablets combo for ${R(PRICES.complete)}, with free delivery.`, token, 3000);
       else await say("No problem, we'll keep it simple with the gel.", token, 2200);
 
-      const s3 = "Delivery is free and goes out from Mpumalanga, same day or next day.";
+      const s3 = "Delivery is [g]free[/g] and goes out from Mpumalanga, [g]same day or next day[/g].";
       await say(s3, token, readTime(s3));
       const s4 = "To order, tap the button below and we continue on WhatsApp. We confirm your plan and you send your full name, province, city, street address and postal code.";
       await say(s4, token, readTime(s4));
-      const s5 = "You pay by EFT or card. Cash on delivery is unavailable. Once the payment reflects, your order goes out.";
+      const s5 = "You pay by EFT or card. [w]Cash on delivery is unavailable.[/w] Once the payment reflects, your order goes out.";
       await say(s5, token, readTime(s5));
       setPanel({ type: "final", complete });
     } catch (e) {
@@ -308,7 +356,7 @@ export default function ReliefChat() {
             )}
             {m.kind === "text" && (
               <div className={`max-w-[84%] whitespace-pre-line px-4 py-2.5 text-[16px] leading-snug ${m.from === "me" ? "rounded-2xl rounded-br-sm bg-ink font-medium text-white" : "rounded-2xl rounded-bl-sm bg-surface"}`}>
-                {m.text}
+                {m.from === "bot" ? renderHighlightedText(m.text ?? "") : m.text}
               </div>
             )}
             {m.kind === "image" && (
@@ -316,6 +364,7 @@ export default function ReliefChat() {
               <img src="/go-pain-gel.jpg" alt="Go-Pain Arnica Gel 100g tube" width={520} height={1151} onLoad={toEnd} className="h-auto w-[56%] max-w-[230px] rounded-2xl rounded-bl-sm border border-line bg-white" />
             )}
             {m.kind === "card" && <PlanCard complete={!!m.complete} />}
+            {m.kind === "benefits" && <BenefitsCard />}
           </div>
         ))}
       </div>
