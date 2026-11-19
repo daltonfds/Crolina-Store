@@ -25,6 +25,10 @@ const EVENT_META: Record<string, { label: string; detail: string; icon: typeof E
   checkout_completed: { label: "Checkout completed", detail: "Checkout completion event", icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-700" },
   cookie_accepted: { label: "Cookie choice", detail: "Made a cookie choice", icon: CircleDot, tone: "bg-slate-100 text-slate-700" },
   exit_prompt_opened: { label: "Exit offer shown", detail: "Saw the leave-page offer", icon: MousePointer2, tone: "bg-pink-50 text-pink-700" },
+  relief_started: { label: "Relief chat started", detail: "Began the pain relief chat", icon: UserRound, tone: "bg-teal-50 text-teal-700" },
+  relief_plan_shown: { label: "Relief plan shown", detail: "Answered the questions and saw a plan", icon: Eye, tone: "bg-teal-50 text-teal-700" },
+  relief_upsell: { label: "Combo choice", detail: "Chose between gel only and gel + tablets", icon: MousePointer2, tone: "bg-violet-50 text-violet-700" },
+  relief_whatsapp_click: { label: "Relief WhatsApp click", detail: "Tapped Continue on WhatsApp", icon: ExternalLink, tone: "bg-emerald-50 text-emerald-700" },
 };
 
 function fmtDate(value: string) {
