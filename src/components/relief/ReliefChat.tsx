@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { whatsappUrl } from "@/lib/config";
 import { pixel, trackRelief } from "@/lib/relief-track";
 
@@ -9,6 +9,16 @@ const PRICES = { relief: 380, reliefOriginal: 500, complete: 499 } as const;
 // ============================
 
 const R = (n: number) => `R${n}`;
+
+// Colors of the approved chat design (teal + navy). Scoped to this page only: they override the
+// store tokens (ink, line, muted, surface) for everything inside the chat, so the rest of the store is untouched.
+const RELIEF_THEME = {
+  "--color-ink": "#0a7f8c",
+  "--color-line": "#e2e8e9",
+  "--color-muted": "#687782",
+  "--color-surface": "#f1f5f6",
+  color: "#0d1b2a",
+} as CSSProperties;
 
 type Msg = { id: number; from: "bot" | "me"; kind: "text" | "typing" | "image" | "card"; text?: string; complete?: boolean };
 type Panel =
@@ -280,7 +290,7 @@ export default function ReliefChat() {
   };
 
   return (
-    <div className="mx-auto flex h-dvh max-w-[480px] flex-col bg-white">
+    <div className="mx-auto flex h-dvh max-w-[480px] flex-col bg-white" style={RELIEF_THEME}>
       <header className="flex items-center gap-3 border-b border-line px-5 py-3.5 pt-[max(0.875rem,env(safe-area-inset-top))]">
         <div aria-hidden className="grid h-10 w-10 flex-none place-items-center rounded-full bg-ink text-lg font-semibold text-white">P</div>
         <b className="text-[17px] font-semibold tracking-tight">Pain relief support</b>
