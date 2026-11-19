@@ -394,7 +394,7 @@ export default function ReliefChat() {
 
           {panel.type === "final" && (
             <>
-              <a href={waHref(answers.current, panel.complete)} target="_blank" rel="noopener noreferrer" onClick={() => onWhatsApp(panel.complete)} className="btn btn-primary mb-1.5 w-full justify-between">
+              <a href={waHref(answers.current, panel.complete)} target="_blank" rel="noopener noreferrer" onClick={() => onWhatsApp(panel.complete)} className="btn mb-1.5 w-full justify-between" style={{ background: GREEN, color: "#fff" }}>
                 <span>Continue on WhatsApp</span>
                 <span aria-hidden>→</span>
               </a>
