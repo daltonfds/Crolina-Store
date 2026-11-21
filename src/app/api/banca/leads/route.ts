@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/service";
-import { normalizeMz } from "@/lib/banca";
+import { normalizePhone, type CurrencyCode } from "@/lib/banca";
 
 const schema = z.object({
   slug: z.string().min(3).max(40),
   name: z.string().trim().max(60).optional(),
   phone: z.string().max(20),
+  currency: z.enum(["BRL", "ZAR", "MZN"]).default("MZN"),
   answers: z.array(z.string().max(200)).max(8),
 });
 
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const d = parsed.data;
-  const phone = normalizeMz(d.phone);
+  const phone = normalizePhone(d.phone, d.currency as CurrencyCode);
   if (!phone) return NextResponse.json({ error: "invalid_phone" }, { status: 400 });
   const sb = createServiceClient();
   const { data: funnel } = await sb.from("banca_funnels").select("id").eq("slug", d.slug).eq("published", true).maybeSingle();
