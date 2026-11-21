@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fmtMT } from "@/lib/banca";
+import { formatMoney, type CurrencyCode } from "@/lib/banca";
 import { fmtDate, inp, panelCls, td, th, type SB } from "./ui";
 
-type Row = { id: string; customer_name: string; phone: string | null; city: string | null; product: string | null; price: number | null; answers: string[]; status: string; created_at: string; funnel: { name: string } | { name: string }[] | null };
+type Row = { id: string; customer_name: string; phone: string | null; city: string | null; product: string | null; price: number | null; currency: CurrencyCode | null; answers: string[]; status: string; created_at: string; funnel: { name: string } | { name: string }[] | null };
 const STATUS = ["novo", "confirmado", "entregue", "cancelado"];
 const fname = (f: Row["funnel"]) => (Array.isArray(f) ? f[0]?.name : f?.name) ?? "";
 
@@ -12,7 +12,7 @@ export default function OrdersView({ sb }: { sb: SB }) {
   const [rows, setRows] = useState<Row[]>([]);
   const [filter, setFilter] = useState("todos");
   useEffect(() => {
-    sb.from("banca_orders").select("id,customer_name,phone,city,product,price,answers,status,created_at,funnel:banca_funnels(name)").order("created_at", { ascending: false }).limit(300)
+    sb.from("banca_orders").select("id,customer_name,phone,city,product,price,currency,answers,status,created_at,funnel:banca_funnels(name)").order("created_at", { ascending: false }).limit(300)
       .then(({ data }) => setRows((data as unknown as Row[]) ?? []));
   }, [sb]);
   const setStatus = async (id: string, status: string) => {
@@ -33,7 +33,7 @@ export default function OrdersView({ sb }: { sb: SB }) {
                 <td className={td}><p className="font-medium">{r.customer_name}</p><p className="text-xs text-gray-500">{[r.city, r.phone && `+${r.phone}`].filter(Boolean).join(" · ")}</p>
                   {r.phone && <a className="text-xs text-[#0a7f8c] underline underline-offset-2" href={`https://wa.me/${r.phone}`} target="_blank" rel="noreferrer">Abrir WhatsApp</a>}</td>
                 <td className={td}><p>{r.product}</p><p className="text-xs text-gray-500">{fname(r.funnel)}</p></td>
-                <td className={`${td} whitespace-nowrap tabular-nums`}>{r.price ? fmtMT(r.price) : ""}</td>
+                <td className={`${td} whitespace-nowrap tabular-nums`}>{r.price ? formatMoney(r.price, r.currency ?? "MZN") : ""}</td>
                 <td className={td}><select className="h-8 rounded-md border border-gray-300 bg-white px-2 text-sm" value={r.status} onChange={(e) => setStatus(r.id, e.target.value)} aria-label="Estado do pedido">{STATUS.map((s) => <option key={s}>{s}</option>)}</select></td>
               </tr>))}</tbody></table>
         )}
