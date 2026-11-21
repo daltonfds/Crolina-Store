@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { fmtMT, lines, shrinkImage, type Product } from "@/lib/banca";
+import { lines, shrinkImage, type Product } from "@/lib/banca";
 import { area, btnD, btnP, btnS, hint, inp, lbl, panelCls, td, th, type SB } from "./ui";
 
 type Draft = { id?: string; name: string; kind: "fisico" | "digital"; price: string; old: string; ben: string; images: string[] };
@@ -47,8 +47,8 @@ export default function ProductsView({ sb, userId }: { sb: SB; userId: string })
           <div><label className={lbl} htmlFor="pn">Nome do produto</label><input id="pn" className={inp} value={d.name} maxLength={60} onChange={(e) => setD({ ...d, name: e.target.value })} /></div>
           <div className="grid grid-cols-3 gap-3">
             <div><label className={lbl} htmlFor="pk">Tipo</label><select id="pk" className={inp} value={d.kind} onChange={(e) => setD({ ...d, kind: e.target.value as "fisico" | "digital" })}><option value="fisico">Físico</option><option value="digital">Digital</option></select></div>
-            <div><label className={lbl} htmlFor="pp">Preço (MT)</label><input id="pp" className={inp} type="number" min={0} value={d.price} onChange={(e) => setD({ ...d, price: e.target.value })} /></div>
-            <div><label className={lbl} htmlFor="po">Preço antigo</label><input id="po" className={inp} type="number" min={0} value={d.old} onChange={(e) => setD({ ...d, old: e.target.value })} /></div>
+            <div><label className={lbl} htmlFor="pp">Preço (valor numérico)</label><input id="pp" className={inp} type="number" min={0} value={d.price} onChange={(e) => setD({ ...d, price: e.target.value })} /></div>
+            <div><label className={lbl} htmlFor="po">Preço anterior</label><input id="po" className={inp} type="number" min={0} value={d.old} onChange={(e) => setD({ ...d, old: e.target.value })} /></div>
           </div>
           <div><label className={lbl} htmlFor="pb">Vantagens (uma por linha)</label><textarea id="pb" className={`${area} min-h-28`} value={d.ben} onChange={(e) => setD({ ...d, ben: e.target.value })} /><p className={hint}>Escreve só o que o produto faz, como vem na embalagem.</p></div>
           <div><label className={lbl} htmlFor="pf">Fotos (até 3)</label><input id="pf" type="file" accept="image/*" multiple onChange={(e) => photos(e.target.files)} className="block w-full text-sm" />
@@ -71,7 +71,7 @@ export default function ProductsView({ sb, userId }: { sb: SB; userId: string })
               <tr key={p.id}>
                 <td className={td}><div className="flex items-center gap-3">{p.images[0] ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={p.images[0]} alt="" className="h-10 w-10 rounded border border-gray-200 object-cover" /> : <div className="h-10 w-10 rounded bg-gray-100" />}<span className="font-medium">{p.name}</span></div></td>
                 <td className={td}>{p.kind === "digital" ? "Digital" : "Físico"}</td>
-                <td className={`${td} tabular-nums`}>{fmtMT(p.price)}</td>
+                <td className={`${td} tabular-nums`}>{p.price.toLocaleString("pt-PT")}</td>
                 <td className={`${td} text-right`}><div className="flex justify-end gap-2"><button type="button" className={btnS} onClick={() => edit(p)}>Editar</button><button type="button" className={btnD} onClick={() => remove(p)}>Apagar</button></div></td>
               </tr>))}</tbody></table>
         )}
