@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { fmtMT, normalizeMz, type FunnelConfig } from "@/lib/banca";
+import { CURRENCIES, currencyDial, formatMoney, normalizePhone, type FunnelConfig } from "@/lib/banca";
 
 type Msg = { id: number; from: "bot" | "me"; kind: "text" | "typing" | "img" | "card"; text?: string; src?: string };
 type Panel =
@@ -123,12 +123,12 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
           if (got) {
             phone = got;
             if (slug && !preview) {
-              fetch("/api/banca/leads", { method: "POST", headers: { "content-type": "application/json" }, keepalive: true, body: JSON.stringify({ slug, name, phone: got, answers }) }).catch(() => undefined);
+              fetch("/api/banca/leads", { method: "POST", headers: { "content-type": "application/json" }, keepalive: true, body: JSON.stringify({ slug, name, phone: got, currency: C.currency ?? "MZN", answers }) }).catch(() => undefined);
             }
           }
         }
         const msg =
-          `Olá! Quero ${dig ? "comprar" : "encomendar"}: ${C.name} (${fmtMT(C.price)}).\nNome: ${name}` +
+          `Olá! Quero ${dig ? "comprar" : "encomendar"}: ${C.name} (${formatMoney(C.price, C.currency ?? "MZN")}).\nNome: ${name}` +
           (city ? `\nCidade: ${city}` : "") + `\n${answers.join("\n")}` +
           (dig ? "\n\nComo recebo o acesso?" : "\n\nConfirmam a disponibilidade, por favor?");
         setPanel({ type: "final", href: `https://wa.me/${C.wa.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, name, city, answers, phone });
@@ -144,7 +144,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
     if (!slug || preview) return;
     fetch("/api/banca/orders", {
       method: "POST", headers: { "content-type": "application/json" }, keepalive: true,
-      body: JSON.stringify({ slug, name: f.name, city: f.city || undefined, product: C.name, price: C.price, answers: f.answers, phone: f.phone || undefined }),
+      body: JSON.stringify({ slug, name: f.name, city: f.city || undefined, product: C.name, price: C.price, currency: C.currency ?? "MZN", answers: f.answers, phone: f.phone || undefined }),
     }).catch(() => undefined);
   };
 
@@ -185,7 +185,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
                 </ul>
                 <div className="mt-3 flex items-baseline gap-2.5">
                   <span className="text-3xl font-semibold tracking-tight">{fmtMT(C.price)}</span>
-                  {C.old > C.price && <s className="text-muted">{fmtMT(C.old)}</s>}
+                  {C.old > C.price && <s className="text-muted">{formatMoney(C.old, C.currency ?? "MZN")}</s>}
                 </div>
               </div>
             )}
@@ -208,17 +208,17 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                const n = normalizeMz(draft);
+                const n = normalizePhone(draft, C.currency ?? "MZN");
                 if (!n) { setPhoneErr(true); return; }
                 panel.submit(n);
               }}
             >
               <div className="flex gap-2">
-                <span className="grid h-12 flex-none place-items-center rounded-xl border border-line bg-surface px-3 text-sm text-muted">+258</span>
-                <input autoFocus className="field flex-1" value={draft} onChange={(e) => { setDraft(e.target.value); setPhoneErr(false); }} placeholder="84 000 0000" inputMode="tel" autoComplete="tel-national" maxLength={14} aria-label="Número de WhatsApp" />
+                <span className="grid h-12 flex-none place-items-center rounded-xl border border-line bg-surface px-3 text-sm text-muted">+{currencyDial(C.currency ?? "MZN")}</span>
+                <input autoFocus className="field flex-1" value={draft} onChange={(e) => { setDraft(e.target.value); setPhoneErr(false); }} placeholder={CURRENCIES.find((x) => x.code === (C.currency ?? "MZN"))?.example ?? "84 000 0000"} inputMode="tel" autoComplete="tel-national" maxLength={14} aria-label="Número de WhatsApp" />
                 <button type="submit" className="btn btn-primary w-12 px-0" aria-label="Enviar">→</button>
               </div>
-              {phoneErr && <p className="mt-2 text-sm" style={{ color: "#b42318" }}>Escreve um número válido, por exemplo 84 000 0000.</p>}
+              {phoneErr && <p className="mt-2 text-sm" style={{ color: "#b42318" }}>Escreve um número válido para o país selecionado.</p>}
               <p className="mt-2 text-xs text-muted">Usamos o teu número só para falar sobre esta encomenda.</p>
               {!panel.required && <button type="button" onClick={() => panel.submit(null)} className="mt-1 block min-h-11 w-full text-center text-sm text-muted underline underline-offset-4">Saltar</button>}
             </form>
