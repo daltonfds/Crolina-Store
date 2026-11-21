@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import FunnelChat from "./FunnelChat";
-import { COLORS, DEFAULT_CONFIG, NICHES, checkConfig, mergeProduct, parseQs, qsToText, slugify, type Funnel, type FunnelConfig, type Product } from "@/lib/banca";
+import { COLORS, CURRENCIES, DEFAULT_CONFIG, NICHES, checkConfig, mergeProduct, parseQs, qsToText, slugify, type Funnel, type FunnelConfig, type Product } from "@/lib/banca";
 import { area, btnP, btnS, hint, inp, lbl, panelCls, td, th, type SB } from "./ui";
 import type { Tab } from "./Painel";
 
@@ -83,7 +83,8 @@ function Editor({ sb, userId, funnel, products, done }: { sb: SB; userId: string
         {chk.warnings.length > 0 && <ul className="space-y-1 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{chk.warnings.map((w) => <li key={w}>{w}</li>)}</ul>}
 
         <section className={`${panelCls} space-y-4 p-5`}>
-          <h2 className="text-sm font-semibold">Produto e assistente</h2>
+          <h2 className="text-sm font-semibold">Produto, moeda e assistente</h2>
+          <div><label className={lbl} htmlFor="currency">Moeda utilizada neste funil</label><select id="currency" className={inp} value={c.currency ?? "MZN"} onChange={(e) => set("currency", e.target.value as FunnelConfig["currency"])}>{CURRENCIES.map((x) => <option key={x.code} value={x.code}>{x.label}</option>)}</select><p className={hint}>Os preços do produto serão apresentados nesta moeda. Não há conversão automática.</p></div>
           <div><label className={lbl} htmlFor="prod">Produto</label>
             <select id="prod" className={inp} value={pid} onChange={(e) => setPid(e.target.value)}>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
             <p className={hint}>O preço, as fotos e as vantagens vêm do produto. Para os mudar, edita o produto.</p></div>
@@ -105,7 +106,7 @@ function Editor({ sb, userId, funnel, products, done }: { sb: SB; userId: string
           {F("Prazo de entrega", c.dnote, (s) => set("dnote", s), 60, "dn")}
           <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">{(Object.keys(payLabels) as (keyof typeof payLabels)[]).map((k) => (
             <label key={k} className="flex items-center gap-2"><input type="checkbox" checked={c.pay[k]} onChange={(e) => set("pay", { ...c.pay, [k]: e.target.checked })} />{payLabels[k]}</label>))}</div>
-          {F("WhatsApp da loja (com 258)", c.wa, (s) => set("wa", s.replace(/\D/g, "")), 15, "wa")}
+          {F("WhatsApp da loja (com código do país)", c.wa, (s) => set("wa", s.replace(/\D/g, "")), 15, "wa")}
           <div><label className={lbl} htmlFor="col">Guardar o número do cliente no fim da conversa</label>
             <select id="col" className={inp} value={c.collect} onChange={(e) => set("collect", e.target.value as FunnelConfig["collect"])}>
               <option value="optional">Sim, opcional (o cliente pode saltar)</option><option value="required">Sim, obrigatório</option><option value="off">Não pedir o número</option></select>
