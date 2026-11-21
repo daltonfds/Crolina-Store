@@ -1,7 +1,15 @@
 export type Pay = { cod: boolean; mpesa: boolean; emola: boolean; mkesh: boolean; bank: boolean };
 export type Question = { q: string; o: string[] };
+export type CurrencyCode = "BRL" | "ZAR" | "MZN";
+export const CURRENCIES = [
+  { code: "BRL", label: "Real brasileiro (BRL)", locale: "pt-BR", dial: "55", example: "11 99999 9999" },
+  { code: "ZAR", label: "Rand sul-africano (ZAR)", locale: "en-ZA", dial: "27", example: "82 123 4567" },
+  { code: "MZN", label: "Metical moçambicano (MZN)", locale: "pt-MZ", dial: "258", example: "84 123 4567" },
+] as const;
+export const formatMoney = (amount: number, currency: CurrencyCode = "MZN") => new Intl.NumberFormat(CURRENCIES.find((c) => c.code === currency)?.locale ?? "pt-MZ", { style: "currency", currency, maximumFractionDigits: 2 }).format(amount);
+export const currencyDial = (currency: CurrencyCode = "MZN") => CURRENCIES.find((c) => c.code === currency)?.dial ?? "258";
 export type FunnelConfig = {
-  brand: string; aname: string; arole: string; name: string; kind: "fisico" | "digital";
+  brand: string; aname: string; arole: string; name: string; kind: "fisico" | "digital"; currency: CurrencyCode;
   price: number; old: number; ben: string[]; imgs: string[]; qs: Question[];
   cities: string[]; dnote: string; pay: Pay; wa: string; color: string;
   collect: "off" | "optional" | "required";
@@ -15,18 +23,22 @@ export function mergeProduct(c: FunnelConfig, p?: Pick<Product, "name" | "kind" 
   return { ...c, name: p.name, kind: p.kind, price: Number(p.price), old: Number(p.old_price), ben: p.benefits ?? [], imgs: p.images ?? [] };
 }
 
-/** Mozambique mobile numbers: 82-87 + 7 digits. Returns 258XXXXXXXXX or null. */
-export function normalizeMz(input: string): string | null {
+/** Normalize a local phone number using the selected market calling code. */
+export function normalizePhone(input: string, currency: CurrencyCode = "MZN"): string | null {
   let d = input.replace(/\D/g, "");
   if (d.startsWith("00")) d = d.slice(2);
-  if (d.length === 9 && /^8[2-7]/.test(d)) d = "258" + d;
-  return /^258 ?8[2-7]\d{7}$/.test(d) ? d : null;
+  const dial = currencyDial(currency);
+  if (d.startsWith(dial)) return d.length >= 10 && d.length <= 15 ? d : null;
+  if (currency === "BRL" && d.length >= 10 && d.length <= 11) return dial + d;
+  if (currency === "ZAR" && d.length === 10 && d.startsWith("0")) d = d.slice(1);
+  if ((currency === "ZAR" || currency === "MZN") && d.length === 9) return dial + d;
+  return null;
 }
 
 export const COLORS = ["#0e7c4a", "#1f5fbf", "#b8270f", "#7a3fb3", "#111111"];
 
 export const DEFAULT_CONFIG: FunnelConfig = {
-  brand: "A minha loja", aname: "Assistente", arole: "Assistente de encomendas", name: "", kind: "fisico",
+  brand: "A minha loja", aname: "Assistente", arole: "Assistente de encomendas", name: "", kind: "fisico", currency: "MZN",
   price: 0, old: 0, ben: [], imgs: [], qs: [], cities: ["Maputo", "Matola", "Beira", "Nampula"], dnote: "no mesmo dia",
   pay: { cod: true, mpesa: true, emola: false, mkesh: false, bank: false }, wa: "258", color: COLORS[0], collect: "optional",
 };
@@ -44,7 +56,7 @@ export const NICHES = [
 ];
 
 export const lines = (t: string) => t.split("\n").map((s) => s.trim()).filter(Boolean);
-export const fmtMT = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " MT";
+export const fmtMT = (n: number) => formatMoney(n, "MZN");
 export const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 36);
 
 export function parseQs(t: string): Question[] {
@@ -70,6 +82,7 @@ export function checkConfig(c: FunnelConfig) {
   else if (WARN.test(text)) warnings.push('Encontrei uma promessa médica ou absoluta ("cura", "100%", "elimina"). O Meta bloqueia anúncios assim. Troca por "alivia" ou "ajuda".');
   if (CRED.test(`${c.aname} ${c.arole}`)) warnings.push("Não apresentes o assistente como médico, farmacêutico ou especialista.");
   if (!c.name) warnings.push("Falta o nome do produto.");
+  if (!["BRL", "ZAR", "MZN"].includes(c.currency ?? "MZN")) warnings.push("Escolhe uma moeda válida.");
   if (c.price <= 0) warnings.push("Falta o preço.");
   if (c.wa.replace(/\D/g, "").length < 11) warnings.push("Confirma o número de WhatsApp, com 258.");
   if (c.qs.length < 1) warnings.push("Usa o formato Pergunta | opção; opção.");
