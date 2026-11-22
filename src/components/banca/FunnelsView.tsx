@@ -13,7 +13,7 @@ export default function FunnelsView({ sb, userId, go }: { sb: SB; userId: string
   const load = useCallback(async () => {
     const [f, p] = await Promise.all([
       sb.from("banca_funnels").select("id,slug,name,config,published,product_id").order("created_at", { ascending: false }),
-      sb.from("banca_products").select("id,name,kind,price,old_price,benefits,images").order("created_at", { ascending: false }),
+      sb.from("banca_products").select("id,name,kind,price,old_price,benefits,images,testimonials").order("created_at", { ascending: false }),
     ]);
     setFunnels((f.data as Funnel[]) ?? []);
     setProducts((p.data as Product[]) ?? []);
