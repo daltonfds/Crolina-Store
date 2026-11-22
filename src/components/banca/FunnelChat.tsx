@@ -184,7 +184,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
                   ))}
                 </ul>
                 <div className="mt-3 flex items-baseline gap-2.5">
-                  <span className="text-3xl font-semibold tracking-tight">{fmtMT(C.price)}</span>
+                  <span className="text-3xl font-semibold tracking-tight">{formatMoney(C.price, C.currency ?? "MZN")}</span>
                   {C.old > C.price && <s className="text-muted">{formatMoney(C.old, C.currency ?? "MZN")}</s>}
                 </div>
               </div>
