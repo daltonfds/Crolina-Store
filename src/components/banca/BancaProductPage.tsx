@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import { formatMoney, type FunnelConfig } from "@/lib/banca";
 
 type Props = { config: FunnelConfig; slug: string; testimonials?: string[] };
@@ -11,6 +11,7 @@ type Stage = "product" | "cart" | "checkout";
 export default function BancaProductPage({ config: C, slug, testimonials = [] }: Props) {
   const [stage, setStage] = useState<Stage>("product");
   const [quantity, setQuantity] = useState(1);
+  const [inCart, setInCart] = useState(false);
   const [photo, setPhoto] = useState(0);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -34,7 +35,7 @@ export default function BancaProductPage({ config: C, slug, testimonials = [] }:
     if (!quantity || quantity < 1) return;
     setStage("checkout");
   };
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     if (!name.trim() || !phone.trim() || (C.kind === "fisico" && !city.trim()) || (methods.length && !payment)) {
@@ -67,7 +68,7 @@ export default function BancaProductPage({ config: C, slug, testimonials = [] }:
         }),
       });
       if (!response.ok) throw new Error("Não foi possível registar a encomenda. Tenta novamente.");
-      window.location.href = `https://wa.me/${C.wa.replace(/\\D/g, "")}?text=${encodeURIComponent(message)}`;
+      window.location.href = `https://wa.me/${C.wa.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocorreu um erro. Tenta novamente.");
     } finally {
@@ -82,7 +83,7 @@ export default function BancaProductPage({ config: C, slug, testimonials = [] }:
           <a href={`/f/${slug}`} className="text-sm font-semibold text-slate-700">← Voltar ao assistente</a>
           <span className="font-semibold tracking-tight">{C.brand}</span>
           <button type="button" onClick={() => setStage("cart")} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold">
-            Carrinho ({quantity})
+            Carrinho ({inCart ? quantity : 0})
           </button>
         </div>
       </header>
@@ -129,7 +130,7 @@ export default function BancaProductPage({ config: C, slug, testimonials = [] }:
                     </div>
                     <span className="text-sm text-slate-500">Total: <strong className="text-slate-900">{formatMoney(total, C.currency ?? "MZN")}</strong></span>
                   </div>
-                  <button type="button" onClick={() => setStage("cart")} className="mt-5 min-h-14 w-full rounded-full px-6 font-semibold text-white" style={{ background: C.color || "#111827" }}>Adicionar ao carrinho</button>
+                  <button type="button" onClick={() => { setInCart(true); setStage("cart"); }} className="mt-5 min-h-14 w-full rounded-full px-6 font-semibold text-white" style={{ background: C.color || "#111827" }}>Adicionar ao carrinho</button>
                   <p className="mt-3 text-center text-xs text-slate-500">Encomenda simples e confirmação pelo WhatsApp.</p>
                 </div>
               </section>
@@ -169,7 +170,7 @@ export default function BancaProductPage({ config: C, slug, testimonials = [] }:
                   </div>
                   <strong>{formatMoney(total, C.currency ?? "MZN")}</strong>
                 </div>
-                <button type="button" onClick={() => { setQuantity(1); setStage("product"); }} className="mt-3 text-sm text-slate-500 underline underline-offset-4">Remover produto</button>
+                <button type="button" onClick={() => { setInCart(false); setQuantity(1); setStage("cart"); }} className="mt-3 text-sm text-slate-500 underline underline-offset-4">Remover produto</button>
               </div>
             </div>
             <div className="flex items-center justify-between py-6 text-lg"><span className="font-semibold">Subtotal</span><strong>{formatMoney(total, C.currency ?? "MZN")}</strong></div>
