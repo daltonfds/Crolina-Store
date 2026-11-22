@@ -12,7 +12,7 @@ import ContactsView from "./ContactsView";
 export type Tab = "resumo" | "funis" | "produtos" | "pedidos" | "contactos";
 const TABS: [Tab, string][] = [["resumo", "Resumo"], ["funis", "Funis"], ["produtos", "Produtos"], ["pedidos", "Pedidos"], ["contactos", "Contactos"]];
 
-export default function Painel() {
+export default function Painel({ initialMode = "login" }: { initialMode?: "login" | "signup" }) {
   const sb = useMemo(() => createClient(), []);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [tab, setTab] = useState<Tab>("resumo");
@@ -24,7 +24,7 @@ export default function Painel() {
   }, [sb]);
 
   if (session === undefined) return <div className="p-8 text-sm text-gray-500">A carregar...</div>;
-  if (!session) return <Auth sb={sb} />;
+  if (!session) return <Auth sb={sb} initialSignup={initialMode === "signup"} />;
 
   const shop = (session.user.user_metadata?.shop_name as string | undefined) || session.user.email;
   return (
@@ -63,7 +63,7 @@ function Auth({ sb }: { sb: SB }) {
     e.preventDefault();
     setMsg(""); setBusy(true);
     const { data, error } = signup
-      ? await sb.auth.signUp({ email, password: pw, options: { data: { shop_name: shop.trim() } } })
+      ? await sb.auth.signUp({ email, password: pw, options: { data: { shop_name: shop.trim() }, emailRedirectTo: `${window.location.origin}/auth/callback?next=/painel` } })
       : await sb.auth.signInWithPassword({ email, password: pw });
     setBusy(false);
     if (error) setMsg(error.message.includes("Invalid login") ? "Email ou palavra-passe incorretos." : error.message);
