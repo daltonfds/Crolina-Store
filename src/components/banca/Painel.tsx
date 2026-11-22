@@ -52,8 +52,8 @@ export default function Painel({ initialMode = "login" }: { initialMode?: "login
   );
 }
 
-function Auth({ sb }: { sb: SB }) {
-  const [signup, setSignup] = useState(false);
+function Auth({ sb, initialSignup = false }: { sb: SB; initialSignup?: boolean }) {
+  const [signup, setSignup] = useState(initialSignup);
   const [shop, setShop] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
