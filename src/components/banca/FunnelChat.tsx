@@ -225,7 +225,9 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
           )}
           {panel.type === "final" && (
             <>
-              {!preview && slug && <a href={panel.productHref} className="btn btn-primary mb-2 w-full justify-between">\n                <span>Ver página do produto</span><span aria-hidden>→</span>\n              </a>}\n              <a href={panel.href} target="_blank" rel="noopener noreferrer" onClick={() => order(panel)} style={{ background: "#178f47" }} className="btn btn-primary mb-1.5 w-full justify-between">
+              {!preview && slug && <a href={panel.productHref} className="btn btn-primary mb-2 w-full justify-between">
+                <span>Ver página do produto</span><span aria-hidden>→</span>
+              </a>}\n              <a href={panel.href} target="_blank" rel="noopener noreferrer" onClick={() => order(panel)} style={{ background: "#178f47" }} className="btn btn-primary mb-1.5 w-full justify-between">
                 <span>Encomendar pelo WhatsApp</span><span aria-hidden>→</span>
               </a>
               <button type="button" onClick={() => setRound((r) => r + 1)} className="block min-h-11 w-full text-center text-sm text-muted underline underline-offset-4">Recomeçar</button>
