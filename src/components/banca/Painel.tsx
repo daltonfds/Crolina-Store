@@ -59,16 +59,46 @@ function Auth({ sb, initialSignup = false }: { sb: SB; initialSignup?: boolean }
   const [pw, setPw] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [step, setStep] = useState<"form" | "code">("form");
+  const [code, setCode] = useState("");
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMsg(""); setBusy(true);
     const { data, error } = signup
-      ? await sb.auth.signUp({ email, password: pw, options: { data: { shop_name: shop.trim() }, emailRedirectTo: `${window.location.origin}/auth/callback?next=/painel` } })
+      ? await sb.auth.signUp({ email, password: pw, options: { data: { shop_name: shop.trim() } } })
       : await sb.auth.signInWithPassword({ email, password: pw });
     setBusy(false);
-    if (error) setMsg(error.message.includes("Invalid login") ? "Email ou palavra-passe incorretos." : error.message);
-    else if (signup && !data.session) setMsg("Enviámos um email de confirmação. Abre o link e volta aqui para entrar.");
+    if (error) { setMsg(error.message.includes("Invalid login") ? "Email ou palavra-passe incorretos." : error.message); return; }
+    if (signup && data.user && data.user.identities?.length === 0) { setMsg("Este email já tem conta. Entra ou recupera a palavra-passe."); return; }
+    if (signup && !data.session) { setStep("code"); setMsg(`Enviámos um código de 8 dígitos para ${email}.`); }
   };
+  const verify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsg(""); setBusy(true);
+    const { error } = await sb.auth.verifyOtp({ email, token: code.trim(), type: "signup" });
+    setBusy(false);
+    if (error) setMsg("Código inválido ou expirado.");
+  };
+  const resend = async () => {
+    setMsg(""); setBusy(true);
+    const { error } = await sb.auth.resend({ type: "signup", email });
+    setBusy(false);
+    setMsg(error ? error.message : "Enviámos um novo código.");
+  };
+  if (step === "code") return (
+    <div className="flex min-h-screen items-center justify-center bg-[#f6f7f8] px-4">
+      <form onSubmit={verify} className={`${panelCls} w-full max-w-sm space-y-4 p-6`}>
+        <div>
+          <p className="text-xl font-semibold tracking-tight">Confirma o teu email</p>
+          <p className="mt-1 text-sm text-gray-600">Escreve o código de 8 dígitos que enviámos para {email}.</p>
+        </div>
+        <div><label className={lbl} htmlFor="code">Código</label><input id="code" className={`${inp} text-center text-lg tracking-[0.4em]`} inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" maxLength={8} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} required /></div>
+        <button type="submit" disabled={busy || code.length !== 8} className={`${btnP} w-full`}>Confirmar</button>
+        <button type="button" disabled={busy} onClick={resend} className="w-full text-sm text-gray-600 underline">Reenviar código</button>
+        {msg && <p className="text-sm text-gray-700" role="alert">{msg}</p>}
+      </form>
+    </div>
+  );
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f6f7f8] px-4">
       <form onSubmit={submit} className={`${panelCls} w-full max-w-sm space-y-4 p-6`}>
