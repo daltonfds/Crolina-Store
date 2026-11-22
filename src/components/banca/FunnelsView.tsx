@@ -34,7 +34,7 @@ export default function FunnelsView({ sb, userId, go }: { sb: SB; userId: string
               <tr key={f.id}>
                 <td className={`${td} font-medium`}>{f.name}</td>
                 <td className={td}>{f.published ? "Publicado" : "Rascunho"}</td>
-                <td className={td}>{f.published ? <a className="text-[#0a7f8c] underline underline-offset-2" href={`/f/${f.slug}`} target="_blank" rel="noreferrer">/f/{f.slug}</a> : <span className="text-gray-400">/f/{f.slug}</span>}</td>
+                <td className={td}><div className="flex flex-col items-start gap-1">{f.published ? <><a className="text-[#0a7f8c] underline underline-offset-2" href={`/f/${f.slug}`} target="_blank" rel="noreferrer">Assistente · /f/{f.slug}</a><a className="text-[#0a7f8c] underline underline-offset-2" href={`/f/${f.slug}/produto`} target="_blank" rel="noreferrer">Produto · /f/{f.slug}/produto</a></> : <><span className="text-gray-400">Assistente · /f/{f.slug}</span><span className="text-gray-400">Produto · /f/{f.slug}/produto</span></>}</div></td>
                 <td className={`${td} text-right`}><button type="button" className={btnS} onClick={() => setEdit(f)}>Editar</button></td>
               </tr>))}</tbody></table>
         )}
