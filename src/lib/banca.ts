@@ -15,7 +15,7 @@ export type FunnelConfig = {
   collect: "off" | "optional" | "required";
 };
 
-export type Product = { id: string; name: string; kind: "fisico" | "digital"; price: number; old_price: number; benefits: string[]; images: string[] };
+export type Product = { id: string; name: string; kind: "fisico" | "digital"; price: number; old_price: number; benefits: string[]; images: string[]; testimonials: string[] };
 export type Funnel = { id: string; slug: string; name: string; config: FunnelConfig; published: boolean; product_id: string | null; created_at?: string };
 
 export function mergeProduct(c: FunnelConfig, p?: Pick<Product, "name" | "kind" | "price" | "old_price" | "benefits" | "images"> | null): FunnelConfig {
