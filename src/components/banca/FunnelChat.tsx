@@ -131,7 +131,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
           `Olá! Quero ${dig ? "comprar" : "encomendar"}: ${C.name} (${formatMoney(C.price, C.currency ?? "MZN")}).\nNome: ${name}` +
           (city ? `\nCidade: ${city}` : "") + `\n${answers.join("\n")}` +
           (dig ? "\n\nComo recebo o acesso?" : "\n\nConfirmam a disponibilidade, por favor?");
-        setPanel({ type: "final", href: `https://wa.me/${C.wa.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, name, city, answers, phone });
+        setPanel({ type: "final", href: `https://wa.me/${C.wa.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, productHref: slug ? `/f/${slug}/produto` : "#", name, city, answers, phone });
       } catch (e) {
         if (!(e instanceof Stop)) throw e;
       }
@@ -225,7 +225,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
           )}
           {panel.type === "final" && (
             <>
-              <a href={panel.href} target="_blank" rel="noopener noreferrer" onClick={() => order(panel)} style={{ background: "#178f47" }} className="btn btn-primary mb-1.5 w-full justify-between">
+              {!preview && slug && <a href={panel.productHref} className="btn btn-primary mb-2 w-full justify-between">\n                <span>Ver página do produto</span><span aria-hidden>→</span>\n              </a>}\n              <a href={panel.href} target="_blank" rel="noopener noreferrer" onClick={() => order(panel)} style={{ background: "#178f47" }} className="btn btn-primary mb-1.5 w-full justify-between">
                 <span>Encomendar pelo WhatsApp</span><span aria-hidden>→</span>
               </a>
               <button type="button" onClick={() => setRound((r) => r + 1)} className="block min-h-11 w-full text-center text-sm text-muted underline underline-offset-4">Recomeçar</button>
