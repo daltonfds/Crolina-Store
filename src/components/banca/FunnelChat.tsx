@@ -97,7 +97,7 @@ export default function FunnelChat({ config: C, slug, preview }: { config: Funne
         await say(`Já tenho tudo, ${name}. Deixa-me preparar a recomendação.`, 1200);
         const m1 = `Com o que me contaste, recomendo ${C.name}.`;
         await say(m1, rd(m1));
-        C.imgs.slice(0, 3).forEach((src) => push({ from: "bot", kind: "img", src }));
+        C.imgs.slice(0, 10).forEach((src) => push({ from: "bot", kind: "img", src }));
         if (C.imgs.length) await sleep(2500);
         await show({ from: "bot", kind: "card" }, 1100, 4500);
         const d = dig
