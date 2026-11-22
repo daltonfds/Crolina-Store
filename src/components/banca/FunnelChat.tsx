@@ -9,7 +9,7 @@ type Panel =
   | { type: "choices"; options: string[]; pick: (v: string) => void }
   | { type: "name"; submit: (v: string) => void }
   | { type: "phone"; required: boolean; submit: (v: string | null) => void }
-  | { type: "final"; href: string; name: string; city: string; answers: string[]; phone: string };
+  | { type: "final"; href: string; productHref: string; name: string; city: string; answers: string[]; phone: string };
 
 class Stop extends Error {}
 const rd = (t: string) => Math.min(5000, Math.max(3000, 1800 + t.length * 22));
